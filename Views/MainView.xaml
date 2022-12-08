@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="KeyRemap.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:KeyRemap.Views"
+             mc:Ignorable="d" 
+             Height="520" Width="660" Background="#FF16191E">
+    <Canvas>
+        <Rectangle x:Name="CloseButton" HorizontalAlignment="Left" Height="22" Margin="634,2,0,0" VerticalAlignment="Top" Width="22">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="../image/close_ring.png"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle x:Name="MinimizeButton" HorizontalAlignment="Left" Height="22" Margin="604,2,0,0" VerticalAlignment="Top" Width="22">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="../image/Remove.png"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle Name="BodyContainer" RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Width="622" Height="415" Margin="19,110,0,-5" VerticalAlignment="Top" Fill="#FF1E2126" Stroke="#FF292C31"/>
+        <Rectangle Name="AddButton" HorizontalAlignment="Left" Height="42" Margin="22,55,0,0" VerticalAlignment="Top" Width="42" MouseLeftButtonDown="AddButton_MouseLeftButtonDown">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="../image/Add_Plus_Square.png"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle x:Name="ImportButton" HorizontalAlignment="Left" Height="42" Margin="81,55,0,0" VerticalAlignment="Top" Width="42">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="../image/File_Upload.png"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle x:Name="EditButton" HorizontalAlignment="Left" Height="42" Margin="136,55,0,0" VerticalAlignment="Top" Width="42">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="../image/Note_Edit.png"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle x:Name="DeleteButton" HorizontalAlignment="Left" Height="42" Margin="190,55,0,0" VerticalAlignment="Top" Width="42">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="../image/Trash_Full.png"/>
+            </Rectangle.Fill>
+        </Rectangle>
+    </Canvas>
+</UserControl>
