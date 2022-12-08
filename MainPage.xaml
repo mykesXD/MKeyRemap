@@ -6,10 +6,10 @@
       xmlns:local="clr-namespace:KeyRemap"
       mc:Ignorable="d" 
       Height="520" Width="660" Background="#FF16191E"
-      Title="MainPage">
-
+      Title="MainPage"
+      Name="MenuWindow" Loaded="MenuWindow_Loaded">
     <Canvas Name="ContainerCanvas">
-        <Rectangle x:Name="CloseButton" HorizontalAlignment="Left" Height="22" Margin="634,2,0,0" VerticalAlignment="Top" Width="22">
+        <Rectangle x:Name="CloseButton" HorizontalAlignment="Left" Height="22" Margin="634,2,0,0" VerticalAlignment="Top" Width="22" MouseLeftButtonDown="CloseButton_MouseLeftButtonDown">
             <Rectangle.Fill>
                 <ImageBrush ImageSource="image/close_ring.png"/>
             </Rectangle.Fill>

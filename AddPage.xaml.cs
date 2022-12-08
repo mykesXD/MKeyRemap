@@ -31,7 +31,7 @@ namespace KeyRemap
         public void Rectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Console.WriteLine("ADD");
-            MainWindow.mainWindowInstance.rows += 1;
+            MainPage.mainPageInstance.rows += 1;
             rowColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffaacc");
             rowStrokeColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffffff");
             Rectangle rowBody = new Rectangle

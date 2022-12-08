@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KeyRemap;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
@@ -63,8 +64,16 @@ namespace DesktopWPFAppLowLevelKeyboardHook
  
                 if (OnKeyPressed != null) { OnKeyPressed(this, new KeyPressedArgs(KeyInterop.KeyFromVirtualKey(vkCode))); }
             }
- 
-            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+            if (MainPage.mainPageInstance.ValidKey)
+            {
+                return new IntPtr(-1);
+                return CallNextHookEx(_hookID, nCode, wParam, lParam);
+            }
+            else
+            {
+                return CallNextHookEx(_hookID, nCode, wParam, lParam);
+            }
+            //Prevents the default key from pressing
         }
     }
  
