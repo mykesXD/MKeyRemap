@@ -67,12 +67,9 @@ namespace DesktopWPFAppLowLevelKeyboardHook
             if (MainPage.mainPageInstance.ValidKey)
             {
                 return new IntPtr(-1);
-                return CallNextHookEx(_hookID, nCode, wParam, lParam);
-            }
-            else
-            {
-                return CallNextHookEx(_hookID, nCode, wParam, lParam);
-            }
+                //return CallNextHookEx(_hookID, nCode, wParam, lParam);
+            }   
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
             //Prevents the default key from pressing
         }
     }

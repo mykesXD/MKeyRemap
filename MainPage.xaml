@@ -19,10 +19,23 @@
                 <ImageBrush ImageSource="image/Remove.png"/>
             </Rectangle.Fill>
         </Rectangle>
-        <ScrollViewer Height="406" Canvas.Left="26" Canvas.Top="109" Width="617">
-            <Canvas Name="BodyContainer" Height="721">
-                <Rectangle Name="BodyBackground" RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Width="587" Height="712" VerticalAlignment="Top" Fill="#FF1E2126" Stroke="#FF292C31" Canvas.Left="6" Canvas.Top="3"/>
+        <ScrollViewer Height="406" Canvas.Left="26" Canvas.Top="109" Width="629">
+            <Canvas Height="527">
+                <Rectangle Name="BodyBackground" RadiusX="10" RadiusY="10" Height="712" VerticalAlignment="Top" Fill="#FF1E2126" Stroke="#FF292C31" Canvas.Left="3" Canvas.Top="3" Grid.ColumnSpan="3" Grid.RowSpan="3" Width="604"/>
+                <Grid Name="BodyContainer" Height="710" Width="602" Canvas.Left="7" Canvas.Top="11">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="42"/>
+                        <ColumnDefinition Width="250"/>
+                    </Grid.ColumnDefinitions>
+                    <!--<Rectangle Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Fill="#FF292C31" RadiusY="10" RadiusX="10" Stroke="#FF34373B" Margin="5,8,5,8"/>-->
+                </Grid>
             </Canvas>
+
         </ScrollViewer>
         <Rectangle Name="AddButton" HorizontalAlignment="Left" Height="42" Margin="22,55,0,0" VerticalAlignment="Top" Width="42" MouseLeftButtonDown="AddButton_MouseLeftButtonDown">
             <Rectangle.Fill>

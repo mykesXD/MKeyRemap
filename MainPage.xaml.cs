@@ -1,4 +1,5 @@
 ﻿using DesktopWPFAppLowLevelKeyboardHook;
+using NonInvasiveKeyboardHookLibrary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -30,24 +32,42 @@ namespace KeyRemap
         Brush rowColor;
         Brush rowStrokeColor;
         public static MainPage mainPageInstance;
+        public static AddPage addPageInstance;
         public bool ValidKey;
+        public string pressedKey;
+        bool addPageOpen;
+        string[] remap;
+        public List<int> lHKids; // list of unique ids for newly registered hotkeys
+        KeyboardHookManager keyboardHookManager;
         public MainPage()
         {
             InitializeComponent();
             mainPageInstance = this;
             rows = 0;
+            addPageOpen = false;
             CompositionTarget.Rendering += MainEventTimer;
             processes = Process.GetProcessesByName("chrome");
+            const UInt32 WM_KEYDOWN = 0x0100;
+            const int VK_F5 = 0x74;
             /*foreach (Process theprocess in processlist)
             {
-                Console.WriteLine("Process: {0} ID: {1}", theprocess.ProcessName, theprocess.Id);
+                Console.WriteLine("Process: {0} ID: {1}", theprocess.ProcessName, theprocess.Id);Q
             }*/
-
+            keyboardHookManager = new KeyboardHookManager();
+            keyboardHookManager.Start();
+            keyboardHookManager.RegisterHotkey(0x24, () =>
+            {
+                Console.WriteLine("NumPad0 detected");
+                Win32.PostMessage(currentWindow, WM_KEYDOWN, VK_F5, 0);
+            });
         }
         public void MainEventTimer(object sender, EventArgs e)
         {
             //Console.WriteLine(GetTitle(Win32.GetForegroundWindow()));
-            Console.WriteLine(rows);
+            if (addPageOpen)
+            {
+                remap = AddPage.addPageInstance.remap;
+            }
             currentWindow = Win32.GetForegroundWindow();
 
         }
@@ -69,27 +89,18 @@ namespace KeyRemap
         }
         public void _listener_OnKeyPressed(object sender, KeyPressedArgs e)
         {
-            if (e.KeyPressed.ToString() == "Home")
-            {
-                ValidKey = true;
-                const UInt32 WM_KEYDOWN = 0x0100;
-                const int VK_F5 = 0x74;
-                Win32.PostMessage(currentWindow, WM_KEYDOWN, VK_F5, 0);
-
-            }
-            else
-            {
-                ValidKey = false;
-            }
+            pressedKey = e.KeyPressed.ToString();
+            
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _listener.UnHookKeyboard();
+            
         }
 
         private void AddButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Console.WriteLine("WTFFFFFFFFFFFFFFFFFFFF");
+            addPageOpen = true;
             this.NavigationService.Navigate(new AddPage());
         }
 
@@ -111,5 +122,6 @@ namespace KeyRemap
             BodyContainer.Children.Add(rowBody);
 
         }
+
     }
 }
