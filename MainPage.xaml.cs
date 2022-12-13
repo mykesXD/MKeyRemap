@@ -1,5 +1,5 @@
 ﻿using DesktopWPFAppLowLevelKeyboardHook;
-using NonInvasiveKeyboardHookLibrary;
+using KeyboardHookLibrary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,7 +27,7 @@ namespace KeyRemap
         private LowLevelKeyboardListener _listener;
         Process[] processes;
         //Process[] processlist = Process.GetProcesses().Where(p => (long)p.MainWindowHandle != 0).ToArray();
-        IntPtr currentWindow;
+        public IntPtr currentWindow;
         public int rows;
         Brush rowColor;
         Brush rowStrokeColor;
@@ -38,7 +38,7 @@ namespace KeyRemap
         bool addPageOpen;
         string[] remap;
         public List<int> lHKids; // list of unique ids for newly registered hotkeys
-        KeyboardHookManager keyboardHookManager;
+        public KeyboardHookManager keyboardHookManager;
         public MainPage()
         {
             InitializeComponent();
@@ -55,11 +55,11 @@ namespace KeyRemap
             }*/
             keyboardHookManager = new KeyboardHookManager();
             keyboardHookManager.Start();
-            keyboardHookManager.RegisterHotkey(0x24, () =>
+            keyboardHookManager.RegisterHotkey(65, () =>
             {
                 Console.WriteLine("NumPad0 detected");
                 Win32.PostMessage(currentWindow, WM_KEYDOWN, VK_F5, 0);
-            });
+            },true);
         }
         public void MainEventTimer(object sender, EventArgs e)
         {
@@ -83,14 +83,7 @@ namespace KeyRemap
         }
         private void MenuWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            _listener = new LowLevelKeyboardListener();
-            _listener.OnKeyPressed += _listener_OnKeyPressed;
-            _listener.HookKeyboard();
-        }
-        public void _listener_OnKeyPressed(object sender, KeyPressedArgs e)
-        {
-            pressedKey = e.KeyPressed.ToString();
-            
+
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {

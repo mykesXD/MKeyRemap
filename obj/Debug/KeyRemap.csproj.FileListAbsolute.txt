@@ -24,4 +24,4 @@ C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\obj\Debug\MainPage.baml
 C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\Newtonsoft.Json.xml
 C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\obj\Debug\KeyRemap.csproj.CopyComplete
-C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\NonInvasiveKeyboardHookLibrary.dll
+C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\KeyboardHookLibrary.dll
