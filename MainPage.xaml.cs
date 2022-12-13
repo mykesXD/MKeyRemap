@@ -1,4 +1,5 @@
 ﻿using DesktopWPFAppLowLevelKeyboardHook;
+using InputSimulatorStandard;
 using KeyboardHookLibrary;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,7 @@ namespace KeyRemap
         string[] remap;
         public List<int> lHKids; // list of unique ids for newly registered hotkeys
         public KeyboardHookManager keyboardHookManager;
+        public InputSimulator keySimulator;
         public MainPage()
         {
             InitializeComponent();
@@ -53,6 +55,7 @@ namespace KeyRemap
             {
                 Console.WriteLine("Process: {0} ID: {1}", theprocess.ProcessName, theprocess.Id);Q
             }*/
+            keySimulator = new InputSimulator();
             keyboardHookManager = new KeyboardHookManager();
             keyboardHookManager.Start();
             keyboardHookManager.RegisterHotkey(65, () =>

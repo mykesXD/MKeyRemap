@@ -165,10 +165,12 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Canvas Margin="3,0,-3,0">
-        <Rectangle x:Name="Key1" RadiusX="10" RadiusY="10" Height="70" Width="84" Fill="#FF292C31" Canvas.Left="15" Canvas.Top="89" Stroke="#FF34373B" MouseLeftButtonDown="Key1_MouseLeftButtonDown"/>
-        <TextBlock x:Name="Key1Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="49" Canvas.Top="114"/>
-        <ListBox x:Name="Key1DropDown" Visibility="Visible" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="229" Canvas.Left="14" Canvas.Top="149" Width="84" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key1DropDown_SelectionChanged">
+    <Canvas>
+        <Rectangle x:Name="Key1" RadiusX="10" RadiusY="10" Height="70" Width="80" Fill="#FF292C31" Canvas.Left="15" Canvas.Top="89" Stroke="#FF34373B" MouseLeftButtonDown="Key1_MouseLeftButtonDown"/>
+        <Viewbox Height="30" Canvas.Left="20" Canvas.Top="107" Width="71">
+            <TextBlock x:Name="Key1Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="49" Canvas.Top="114"/>
+        </Viewbox>
+        <ListBox x:Name="Key1DropDown" Visibility="Visible" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="164" Canvas.Left="15" Canvas.Top="149" Width="80" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key1DropDown_SelectionChanged">
             <ListBox.Resources>
                 <Style TargetType="{x:Type ListBox}">
                     <Style.Resources>
@@ -180,13 +182,28 @@
             </ListBox.Resources>
         </ListBox>
         <Rectangle Name="ApplyButton" RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Height="41" Margin="184,390,0,0" VerticalAlignment="Top" Width="82" MouseLeftButtonDown="ApplyButton_MouseLeftButtonDown" Fill="#FF292C31"/>
-        <Rectangle x:Name="Key2" RadiusX="10" RadiusY="10" Height="70" Width="84" Fill="#FF292C31" Canvas.Left="108" Canvas.Top="89" MouseLeftButtonDown="Key2_MouseLeftButtonDown" Stroke="#FF34373B"/>
-        <TextBlock x:Name="Key2Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="151" Canvas.Top="111"/>
+        <Rectangle x:Name="Key2" RadiusX="10" RadiusY="10" Height="70" Width="80" Fill="#FF292C31" Canvas.Left="105" Canvas.Top="89" MouseLeftButtonDown="Key2_MouseLeftButtonDown" Stroke="#FF34373B"/>
+        <Viewbox Height="30" Canvas.Left="109" Canvas.Top="107" Width="71">
+            <TextBlock x:Name="Key2Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="49" Canvas.Top="114"/>
+        </Viewbox>
+        <ListBox x:Name="Key2DropDown" Visibility="Visible" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="164" Canvas.Left="105" Canvas.Top="149" Width="80" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key2DropDown_SelectionChanged">
+            <ListBox.Resources>
+                <Style TargetType="{x:Type ListBox}">
+                    <Style.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="0,0,5,5"/>
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </ListBox.Resources>
+        </ListBox>
         <!--<Rectangle x:Name="Key3Combo" RadiusX="10" RadiusY="10" Height="238" Width="70" Fill="#FF292C31" Canvas.Left="214" Canvas.Top="141" Stroke="#FF34373B"/>-->
         <!--<ScrollViewer Height="218" Canvas.Left="214" Canvas.Top="160" Width="70"/>-->
-        <Rectangle x:Name="Key3" RadiusX="10" RadiusY="10" Height="70" Width="84" Fill="#FF292C31" Canvas.Left="201" Canvas.Top="89" MouseLeftButtonDown="Key3_MouseLeftButtonDown" Stroke="#FF34373B"/>
-        <TextBlock x:Name="Key3Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="241" Canvas.Top="110"/>
-        <ListBox Name="Key3DropDown" Visibility="Visible" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="229" Canvas.Left="201" Canvas.Top="149" Width="84" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key3DropDown_SelectionChanged">
+        <Rectangle x:Name="Key3" RadiusX="10" RadiusY="10" Height="70" Width="100" Fill="#FF292C31" Canvas.Left="195" Canvas.Top="89" MouseLeftButtonDown="Key3_MouseLeftButtonDown" Stroke="#FF34373B"/>
+        <Viewbox Height="30" Canvas.Left="199" Canvas.Top="107" Width="92">
+            <TextBlock x:Name="Key3Text" IsHitTestVisible="False" TextWrapping="Wrap"  TextAlignment="Center" Text=" " HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="20" Foreground="White" Canvas.Left="241" Canvas.Top="110"/>
+        </Viewbox>
+        <ListBox Name="Key3DropDown" Visibility="Visible" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="229" Canvas.Left="195" Canvas.Top="149" Width="100" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key3DropDown_SelectionChanged">
             <ListBox.Resources>
                 <Style TargetType="ListBox">
                     <Style.Resources>
@@ -197,13 +214,41 @@
                 </Style>
             </ListBox.Resources>
         </ListBox>
-        <Rectangle x:Name="Key4" RadiusX="10" RadiusY="10" Height="70" Width="84" Fill="#FF292C31" Canvas.Left="371" Canvas.Top="89" MouseLeftButtonDown="Key4_MouseLeftButtonDown" Stroke="#FF34373B"/>
-        <TextBlock x:Name="Key4Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="409" Canvas.Top="111"/>
-        <Rectangle x:Name="Key5" RadiusX="10" RadiusY="10" Height="70" Width="84" Fill="#FF292C31" Canvas.Left="465" Canvas.Top="89" MouseLeftButtonDown="Key5_MouseLeftButtonDown" Stroke="#FF34373B"/>
-        <TextBlock x:Name="Key5Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="502" Canvas.Top="111"/>
-        <Rectangle x:Name="Key6" RadiusX="10" RadiusY="10" Height="70" Width="84" Fill="#FF292C31" Canvas.Left="558" Canvas.Top="89" MouseLeftButtonDown="Key6_MouseLeftButtonDown" Stroke="#FF34373B"/>
-        <TextBlock x:Name="Key6Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="594" Canvas.Top="111"/>
-        <ListBox Name="Key6DropDown" Visibility="Hidden" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="229" Canvas.Left="558" Canvas.Top="149" Width="84" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key6DropDown_SelectionChanged">
+        <Rectangle x:Name="Key4" RadiusX="10" RadiusY="10" Height="70" Width="80" Fill="#FF292C31" Canvas.Left="363" Canvas.Top="89" MouseLeftButtonDown="Key4_MouseLeftButtonDown" Stroke="#FF34373B"/>
+        <Viewbox Height="30" Canvas.Left="368" Canvas.Top="107" Width="71">
+            <TextBlock x:Name="Key4Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="49" Canvas.Top="114"/>
+        </Viewbox>
+        <ListBox x:Name="Key4DropDown" Visibility="Visible" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="164" Canvas.Left="363" Canvas.Top="149" Width="80" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key4DropDown_SelectionChanged">
+            <ListBox.Resources>
+                <Style TargetType="{x:Type ListBox}">
+                    <Style.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="0,0,5,5"/>
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </ListBox.Resources>
+        </ListBox>
+        <Rectangle x:Name="Key5" RadiusX="10" RadiusY="10" Height="70" Width="80" Fill="#FF292C31" Canvas.Left="453" Canvas.Top="89" MouseLeftButtonDown="Key5_MouseLeftButtonDown" Stroke="#FF34373B"/>
+        <Viewbox Height="30" Canvas.Left="458" Canvas.Top="107" Width="71">
+            <TextBlock x:Name="Key5Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="49" Canvas.Top="114"/>
+        </Viewbox>
+        <ListBox x:Name="Key5DropDown" Visibility="Visible" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="164" Canvas.Left="453" Canvas.Top="149" Width="80" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key5DropDown_SelectionChanged">
+            <ListBox.Resources>
+                <Style TargetType="{x:Type ListBox}">
+                    <Style.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="0,0,5,5"/>
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </ListBox.Resources>
+        </ListBox>
+        <Rectangle x:Name="Key6" RadiusX="10" RadiusY="10" Height="70" Width="100" Fill="#FF292C31" Canvas.Left="543" Canvas.Top="89" MouseLeftButtonDown="Key6_MouseLeftButtonDown" Stroke="#FF34373B"/>
+        <Viewbox Height="30" Canvas.Left="547" Canvas.Top="107" Width="92">
+            <TextBlock x:Name="Key6Text" IsHitTestVisible="False" TextWrapping="Wrap"  TextAlignment="Center" Text=" " HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="White" Canvas.Left="241" Canvas.Top="110"/>
+        </Viewbox>
+        <ListBox Name="Key6DropDown" Visibility="Visible" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="229" Canvas.Left="543" Canvas.Top="149" Width="100" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key6DropDown_SelectionChanged">
             <ListBox.Resources>
                 <Style TargetType="ListBox">
                     <Style.Resources>
