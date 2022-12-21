@@ -2,8 +2,10 @@
 using InputSimulatorStandard.Native;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,14 +32,13 @@ namespace KeyRemap
         public string keyMap1;
         public string keyMap2;
         public int key1, key2;
-        const UInt32 WM_KEYDOWN = 0x0100;
-
         public static AddPage addPageInstance;
+        public Guid hotkeyID;
         public AddPage()
         {
             
             string[] SelectableKeys = { "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh" , "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruhhhhhh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh" };
-            string[] SelectableControlKeys = { "CTRL", "ALT", "SHIFT", "LWIN"};
+            string[] SelectableControlKeys = {"L-CTRL", "L-ALT", "L-SHIFT", "L-WIN", "R-CTRL", "R-ALT", "R-SHIFT", "R-WIN" };
             InitializeComponent();
             addPageInstance = this;
             Key1DropDown.ItemsSource = SelectableControlKeys;
@@ -128,49 +129,196 @@ namespace KeyRemap
 
             //Fill="#FF292C31" Height="44" Canvas.Left="72" RadiusY="10" RadiusX="10" Stroke="#FF34373B" Canvas.Top="25" Width="494"/>
             MainPage.mainPageInstance.rows += 1;
-            switch(Key1Text.Text)
+            if (Key1Text.Text.Contains("ALT"))
             {
-                case "ALT": 
-                    key1 = 1;
-                    break;
-                case "CTRL":
-                    key1 = 2;
-                    break;
-                case "SHIFT":
-                    key1 = 4;
-                    break;
-                case "LWIN":
-                    key1 = 8;
-                    break;
+                key1 = 1;
+            } else if (Key1Text.Text.Contains("CTRL")){
+                key1 = 2;
+            }else if (Key1Text.Text.Contains("SHIFT")){
+                key1 = 4;
             }
-            switch (Key2Text.Text)
-            {
-                case "ALT":
-                    key2 = 1;
-                    break;
-                case "CTRL":
-                    key2 = 2;
-                    break;
-                case "SHIFT":
-                    key2 = 4;
-                    break;
-                case "LWIN":
-                    key2 = 8;
-                    break;
+            else if (Key1Text.Text.Contains("WIN")){
+                key1 = 8;
             }
-            Console.WriteLine(key1);
-            MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey((KeyboardHookLibrary.ModifierKeys)key1,KeyDictionary.keyReversed[Key3Text.Text], () =>
+            else
             {
-                Console.WriteLine("NEW detected");
-                this.Dispatcher.Invoke(() =>
+                key1 = 0;
+            }
+            if (Key2Text.Text.Contains("ALT"))
+            {
+                key2 = 1;
+            }
+            else if (Key2Text.Text.Contains("CTRL"))
+            {
+                key2 = 2;
+            }
+            else if (Key2Text.Text.Contains("SHIFT"))
+            {
+                key2 = 4;
+            }
+            else if (Key2Text.Text.Contains("WIN"))
+            {
+                key2 = 8;
+            }
+            else
+            {
+                key2 = 0;
+            }
+            if (key1 == 0 && key2 == 0)
+            {
+                hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey(KeyDictionary.keyReversed[Key3Text.Text], () =>
                 {
-                    MainPage.mainPageInstance.keySimulator.Keyboard.ModifiedKeyStroke(
-                            new[] { (VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text], (VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text], },
-                            new[] { (VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]});
-                    //MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyDictionary[Key6Text.Text]);
-                    //Win32.PostMessage(MainPage.mainPageInstance.currentWindow, WM_KEYDOWN, KeyDictionary.keyDictionary[Key6Text.Text], 0);
-                });
-            }, true);
+                    if (MainPage.mainPageInstance.currentWindowName.Contains("Chrome"))
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            if (Key4Text.Text == " " && Key5Text.Text == " ")
+                            {
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                            }
+                            else if (Key4Text.Text != " " && Key5Text.Text == " ")
+                            {
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                            }
+                            else if (Key4Text.Text == " " && Key5Text.Text != " ")
+                            {
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                            }
+                            else if (Key4Text.Text != " " && Key5Text.Text != " ")
+                            {
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        this.Dispatcher.Invoke(() => {
+                            MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key3Text.Text]);
+                        });
+                    }
+                },true);
+            } else if (key2 == 0 && key1 > 0) {
+                    hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey((KeyboardHookLibrary.ModifierKeys)key1, KeyDictionary.keyReversed[Key3Text.Text], () =>
+                    {
+                        Console.WriteLine("WORKING1");
+                        if (MainPage.mainPageInstance.currentWindowName.Contains("Chrome"))
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                if (Key4Text.Text == " " && Key5Text.Text == " ")
+                                {
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                }
+                                else if (Key4Text.Text != " " && Key5Text.Text == " ")
+                                {
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                }
+                                else if (Key4Text.Text == " " && Key5Text.Text != " ")
+                                {
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                                }
+                                else if (Key4Text.Text != " " && Key5Text.Text != " ")
+                                {
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                MainPage.mainPageInstance.keySimulator.Keyboard.ModifiedKeyStroke((VirtualKeyCode)KeyDictionary.controlKeyDictionary[key1], (VirtualKeyCode)KeyDictionary.keyReversed[Key3Text.Text]);
+                            });
+                        }
+                    }, true);
+            }
+            else if (key1 == 0 && key2 > 0)
+            {
+                hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey((KeyboardHookLibrary.ModifierKeys)key2, KeyDictionary.keyReversed[Key3Text.Text], () =>
+                {
+                    Console.WriteLine("WORKING");
+                    if (MainPage.mainPageInstance.currentWindowName.Contains("Chrome")) {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            if (Key4Text.Text == " " && Key5Text.Text == " ")
+                            {
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                            }
+                            else if (Key4Text.Text != " " && Key5Text.Text == " ")
+                            {
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                            }
+                            else if (Key4Text.Text == " " && Key5Text.Text != " ")
+                            {
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                            }
+                            else if (Key4Text.Text != " " && Key5Text.Text != " ")
+                            {
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Console.WriteLine("Bruh");
+                            MainPage.mainPageInstance.keySimulator.Keyboard.ModifiedKeyStroke((VirtualKeyCode)KeyDictionary.controlKeyDictionary[key2], (VirtualKeyCode)KeyDictionary.keyReversed[Key3Text.Text]);
+                        });
+                    }
+
+                }, true);
+            }
+            else if (key1 > 0 && key2 > 0)
+            {
+                hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey(new[] { (KeyboardHookLibrary.ModifierKeys)key1 , (KeyboardHookLibrary.ModifierKeys)key2 }, KeyDictionary.keyReversed[Key3Text.Text], () =>
+                {
+                    if (MainPage.mainPageInstance.currentWindowName.Contains("Chrome"))
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                        Console.WriteLine("2 detected");
+                        MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                        MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                        MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                        MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                        MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                        });
+                    }
+                    else
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            MainPage.mainPageInstance.keySimulator.Keyboard.ModifiedKeyStroke(new[] { (VirtualKeyCode)KeyDictionary.controlKeyDictionary[key1], (VirtualKeyCode)KeyDictionary.controlKeyDictionary[key2] }, (VirtualKeyCode)KeyDictionary.keyReversed[Key3Text.Text]);
+                        });
+                    }
+                },true);
+            }
+            MainPage.mainPageInstance.hotkeyIDList.Add(hotkeyID);
             this.NavigationService.GoBack();
         }
 
@@ -265,17 +413,16 @@ namespace KeyRemap
             {
                 if (e.SystemKey.ToString() == "None")
                 {
-                    if (KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "L_CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "R_CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "L_SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "R_SHIFT")
+                    if ( KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "L-CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "R-CTRL" ||
+                        KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "L-SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "R-SHIFT" ||
+                        KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "L-WIN" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "R-WIN")
                     {
                         Key1Text.Text = KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)];
                     }
                 }
                 else
                 {
-                    if (KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.SystemKey)] == "ALT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "L_ALT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "R_ALT")
-                    {
-                        Key1Text.Text = KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.SystemKey)];
-                    }
+                    Key1Text.Text = KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.SystemKey)];
                 }
             Console.WriteLine(KeyInterop.VirtualKeyFromKey(e.Key));
             KeyFocused[1] = false;
@@ -352,6 +499,12 @@ namespace KeyRemap
                 Key6DropDown.Visibility = Visibility.Hidden;
             }
                     }
+
+        private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
         private void AddWindow_Loaded(object sender, RoutedEventArgs e)
         {
             AddWindow.Focus();

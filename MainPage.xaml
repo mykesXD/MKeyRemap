@@ -52,7 +52,7 @@
                 <ImageBrush ImageSource="image/Note_Edit.png"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle x:Name="DeleteButton" HorizontalAlignment="Left" Height="42" Margin="190,55,0,0" VerticalAlignment="Top" Width="42">
+        <Rectangle x:Name="DeleteButton" HorizontalAlignment="Left" Height="42" Margin="190,55,0,0" VerticalAlignment="Top" Width="42" MouseLeftButtonDown="DeleteButton_MouseLeftButtonDown">
             <Rectangle.Fill>
                 <ImageBrush ImageSource="image/Trash_Full.png"/>
             </Rectangle.Fill>

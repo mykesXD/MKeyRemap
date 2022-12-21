@@ -259,6 +259,7 @@
                 </Style>
             </ListBox.Resources>
         </ListBox>
+        <Rectangle x:Name="DeleteButton" RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Height="41" VerticalAlignment="Top" Width="82" Fill="#FF292C31" Canvas.Left="342" Canvas.Top="390" MouseLeftButtonDown="DeleteButton_MouseLeftButtonDown"/>
     </Canvas>
 
 </Page>

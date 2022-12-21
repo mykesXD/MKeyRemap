@@ -70,6 +70,7 @@
     <Compile Include="AddPage.xaml.cs">
       <DependentUpon>AddPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GlobalHook.cs" />
     <Compile Include="KeyDictionary.cs" />
     <Compile Include="LowLevelKeyboardListener.cs" />
     <Compile Include="MainPage.xaml.cs">

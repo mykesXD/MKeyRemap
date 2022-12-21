@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\obj\Debug\
+C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\obj\Release\
 KeyRemap
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\App.xaml
 51461220006
 
-161837375721
+16967599314
 191854978562
 AddPage.xaml;MainPage.xaml;MainWindow.xaml;Views\AddView.xaml;Views\MainView.xaml;
 
-False
+True
 
