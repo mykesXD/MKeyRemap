@@ -12,7 +12,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -70,6 +69,7 @@ namespace KeyRemap
                 remap = AddPage.addPageInstance.remap;
             }
             currentWindowName =  GetTitle(Win32.GetForegroundWindow());
+            Console.WriteLine(currentWindowName);
         }
         static string GetTitle(IntPtr handle, int length = 128)
         {

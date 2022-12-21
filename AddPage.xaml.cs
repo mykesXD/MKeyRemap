@@ -1,5 +1,4 @@
-﻿using InputSimulatorStandard;
-using InputSimulatorStandard.Native;
+﻿using InputSimulatorStandard.Native;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +16,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-
 namespace KeyRemap
 {
     /// <summary>
@@ -34,9 +32,10 @@ namespace KeyRemap
         public int key1, key2;
         public static AddPage addPageInstance;
         public Guid hotkeyID;
+        public int delay;
         public AddPage()
         {
-            
+            delay = 200;
             string[] SelectableKeys = { "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh" , "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruhhhhhh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh" };
             string[] SelectableControlKeys = {"L-CTRL", "L-ALT", "L-SHIFT", "L-WIN", "R-CTRL", "R-ALT", "R-SHIFT", "R-WIN" };
             InitializeComponent();
@@ -178,18 +177,21 @@ namespace KeyRemap
                             }
                             else if (Key4Text.Text != " " && Key5Text.Text == " ")
                             {
+                                Thread.Sleep(delay);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
                             }
                             else if (Key4Text.Text == " " && Key5Text.Text != " ")
                             {
+                                Thread.Sleep(delay);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
                             }
                             else if (Key4Text.Text != " " && Key5Text.Text != " ")
                             {
+                                Thread.Sleep(delay);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
@@ -215,22 +217,26 @@ namespace KeyRemap
                             {
                                 if (Key4Text.Text == " " && Key5Text.Text == " ")
                                 {
+                                    Thread.Sleep(delay);
                                     MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
                                 }
                                 else if (Key4Text.Text != " " && Key5Text.Text == " ")
                                 {
+                                    Thread.Sleep(delay);
                                     MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
                                     MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
                                     MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
                                 }
                                 else if (Key4Text.Text == " " && Key5Text.Text != " ")
                                 {
+                                    Thread.Sleep(delay);
                                     MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
                                     MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
                                     MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
                                 }
                                 else if (Key4Text.Text != " " && Key5Text.Text != " ")
                                 {
+                                    Thread.Sleep(delay);
                                     MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
                                     MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
                                     MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
@@ -259,21 +265,25 @@ namespace KeyRemap
                             if (Key4Text.Text == " " && Key5Text.Text == " ")
                             {
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+
                             }
                             else if (Key4Text.Text != " " && Key5Text.Text == " ")
                             {
+                                Thread.Sleep(delay);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
                             }
                             else if (Key4Text.Text == " " && Key5Text.Text != " ")
                             {
+                                Thread.Sleep(delay);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
                             }
                             else if (Key4Text.Text != " " && Key5Text.Text != " ")
                             {
+                                Thread.Sleep(delay);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
                                 MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
@@ -301,12 +311,34 @@ namespace KeyRemap
                     {
                         this.Dispatcher.Invoke(() =>
                         {
-                        Console.WriteLine("2 detected");
-                        MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                        MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                        MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                        MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                        MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                            Console.WriteLine("2 detected");
+                            if (Key4Text.Text == " " && Key5Text.Text == " ")
+                            {
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                            }
+                            else if (Key4Text.Text != " " && Key5Text.Text == " ")
+                            {
+                                Thread.Sleep(delay);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                            }
+                            else if (Key4Text.Text == " " && Key5Text.Text != " ")
+                            {
+                                Thread.Sleep(delay);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                            }
+                            else if (Key4Text.Text != " " && Key5Text.Text != " ")
+                            {
+                                Thread.Sleep(delay);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
+                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
+                            }
                         });
                     }
                     else

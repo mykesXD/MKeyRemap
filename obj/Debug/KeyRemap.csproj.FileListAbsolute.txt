@@ -25,4 +25,8 @@ C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\Newtonsoft.Json.xml
 C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\obj\Debug\KeyRemap.csproj.CopyComplete
 C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\KeyboardHookLibrary.dll
+C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\System.Threading.Tasks.Extensions.xml
 C:\Users\Mykes\source\repos\KeyRemap\KeyRemap\bin\Debug\InputSimulatorStandard.dll
