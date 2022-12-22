@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -41,6 +42,10 @@ namespace KeyRemap
         string[] remap;
         public List<Guid> hotkeyIDList;
         public List<String> hotkeyWindowList;
+
+        public List<IntPtr> processHWNDList;
+        public List<String> processNameList;
+        public List<ImageBrush> processIconList;
         public List<int> lHKids; // list of unique ids for newly registered hotkeys
         public KeyboardHookManager keyboardHookManager;
         public InputSimulator keySimulator;
@@ -50,14 +55,46 @@ namespace KeyRemap
             mainPageInstance = this;
             rows = 0;
             addPageOpen = false;
-            CompositionTarget.Rendering += MainEventTimer;
-            /*foreach (Process theprocess in processlist)
-            {
-                Console.WriteLine("Process: {0} ID: {1}", theprocess.ProcessName, theprocess.Id);Q
-            }*/
+            processHWNDList = new List<IntPtr>();
+            processNameList = new List<String>();
+            processIconList = new List<ImageBrush>();
             hotkeyIDList = new List<Guid>();
             hotkeyWindowList = new List<String>();
+        CompositionTarget.Rendering += MainEventTimer;
+            foreach (KeyValuePair<IntPtr, string> window in Win32.GetOpenWindows())
+            {
+                IntPtr handle = window.Key;
+                string title = window.Value;
 
+                IntPtr procId;
+                Win32.GetWindowThreadProcessId(handle,out procId);
+                var p = Process.GetProcessById((int)procId).MainModule.FileVersionInfo.FileDescription;
+                if(p == "")
+                {
+                    processNameList.Add(title);
+                    Console.WriteLine("{0}^",title);
+                }
+                else
+                {
+                    processNameList.Add(p);
+                    try
+                    {
+                        Console.WriteLine(Process.GetProcessById((int)procId).MainModule.FileName);
+                        Console.WriteLine(p);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("{0},FAIL",p);
+                    }
+                }
+                using (System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)procId).MainModule.FileName))
+                {
+                    processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
+                }
+            }
+
+            hotkeyWindowList = new List<String>();
+            EditButton.Fill = processIconList[2];
             keySimulator = new InputSimulator();
             keyboardHookManager = new KeyboardHookManager();
             keyboardHookManager.Start();
@@ -68,14 +105,30 @@ namespace KeyRemap
             {
                 remap = AddPage.addPageInstance.remap;
             }
+
             currentWindowName =  GetTitle(Win32.GetForegroundWindow());
-            Console.WriteLine(currentWindowName);
+            //Console.WriteLine(currentWindowName);
         }
         static string GetTitle(IntPtr handle, int length = 128)
         {
             StringBuilder builder = new StringBuilder(length);
             Win32.GetWindowText(handle, builder, length + 1);
-            return builder.ToString();
+            IntPtr procId;
+            Win32.GetWindowThreadProcessId(handle, out procId);
+            var p = builder.ToString();
+            try
+            {
+                p = Process.GetProcessById((int)procId).MainModule.FileVersionInfo.FileDescription;
+            }
+            catch
+            {
+                Console.WriteLine("SYSTEM FILE");
+            }
+            if (p == "")
+            {
+                return builder.ToString();
+            }
+            return p;
         }
         public void CloseButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -119,6 +172,11 @@ namespace KeyRemap
         private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             keyboardHookManager.UnregisterHotkey(hotkeyIDList[0]);
+        }
+
+        private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }

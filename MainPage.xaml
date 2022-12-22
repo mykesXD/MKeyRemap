@@ -24,7 +24,7 @@
                 <Rectangle Name="BodyBackground" RadiusX="10" RadiusY="10" Height="712" VerticalAlignment="Top" Fill="#FF1E2126" Stroke="#FF292C31" Canvas.Left="3" Canvas.Top="3" Grid.ColumnSpan="3" Grid.RowSpan="3" Width="604"/>
                 <Grid Name="BodyContainer" Height="710" Width="602" Canvas.Left="7" Canvas.Top="11">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="60" />
+                        <RowDefinition Height="60"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="60"/>
@@ -47,7 +47,7 @@
                 <ImageBrush ImageSource="image/File_Upload.png"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle x:Name="EditButton" HorizontalAlignment="Left" Height="42" Margin="136,55,0,0" VerticalAlignment="Top" Width="42">
+        <Rectangle Name="EditButton" HorizontalAlignment="Left" Height="42" Margin="136,55,0,0" VerticalAlignment="Top" Width="42" MouseLeftButtonDown="EditButton_MouseLeftButtonDown">
             <Rectangle.Fill>
                 <ImageBrush ImageSource="image/Note_Edit.png"/>
             </Rectangle.Fill>

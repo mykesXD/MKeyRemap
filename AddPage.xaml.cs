@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -33,13 +34,46 @@ namespace KeyRemap
         public static AddPage addPageInstance;
         public Guid hotkeyID;
         public int delay;
+        public List<IntPtr> processHWNDList;
+        public List<String> processNameList;
+        public List<ImageBrush> processIconList;
+        public string windowToActivate;
         public AddPage()
         {
+            processHWNDList = new List<IntPtr>();
+            processNameList = new List<String>();
+            processIconList = new List<ImageBrush>();
+            windowToActivate = "*Everywhere*";
+            foreach (KeyValuePair<IntPtr, string> window in Win32.GetOpenWindows())
+            {
+                IntPtr handle = window.Key;
+                string title = window.Value;
+
+                IntPtr procId;
+                Win32.GetWindowThreadProcessId(handle, out procId);
+                var p = Process.GetProcessById((int)procId).MainModule.FileVersionInfo.FileDescription;
+                if (p == "")
+                {
+                    processNameList.Add(title);
+                    Console.WriteLine("{0}^", title);
+                }
+                else
+                {
+                    processNameList.Add(p);
+                    Console.WriteLine(p);
+                }
+                using (System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)procId).MainModule.FileName))
+                {
+                    processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
+                }
+            }
             delay = 200;
             string[] SelectableKeys = { "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh" , "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruhhhhhh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh" };
             string[] SelectableControlKeys = {"L-CTRL", "L-ALT", "L-SHIFT", "L-WIN", "R-CTRL", "R-ALT", "R-SHIFT", "R-WIN" };
             InitializeComponent();
             addPageInstance = this;
+            WindowDropDown.ItemsSource = processNameList;
+
             Key1DropDown.ItemsSource = SelectableControlKeys;
             Key2DropDown.ItemsSource = SelectableControlKeys;
             Key4DropDown.ItemsSource = SelectableControlKeys;
@@ -49,6 +83,12 @@ namespace KeyRemap
             KeyFocused = new bool[6];
             for (int i = 0; i < KeyFocused.Length; i++)
                 KeyFocused[i] = false;
+        }
+        public void rowBody_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Rectangle rowBody = sender as Rectangle;
+            rowBody.StrokeThickness = 1;
+
         }
         public void ApplyButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -79,6 +119,24 @@ namespace KeyRemap
             }
             rowColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF292C31");
             rowStrokeColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF34373B");
+            Rectangle rowBackground = new Rectangle
+            {
+                Name = string.Format("RemapBackground{0}", MainPage.mainPageInstance.rows),
+                Width = 590,
+                Height = 56,
+                Fill = Brushes.Transparent,
+                StrokeThickness = 0,
+                Stroke = (SolidColorBrush)new BrushConverter().ConvertFrom("#0094FF"),
+                RadiusX = 10,
+                RadiusY = 10,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 2, 0, 2),
+            };            
+            rowBackground.MouseLeftButtonDown += rowBody_MouseLeftButtonDown;
+            Grid.SetRow(rowBackground, MainPage.mainPageInstance.rows);
+            Grid.SetColumn(rowBackground, 0);
+            Grid.SetColumnSpan(rowBackground, 4);
             Rectangle rowBody = new Rectangle
             {
                 Name = string.Format("RemapRow{0}", MainPage.mainPageInstance.rows),
@@ -89,11 +147,22 @@ namespace KeyRemap
                 Stroke = rowStrokeColor,
                 RadiusX = 10,
                 RadiusY = 10,
-                Margin = new Thickness(5, 8, 5, 8)
+                Margin = new Thickness(5, 8, 5, 8),
             };
             Grid.SetRow(rowBody, MainPage.mainPageInstance.rows);
             Grid.SetColumn(rowBody, 1);
             Grid.SetColumnSpan(rowBody, 3);
+            Rectangle keyIcon = new Rectangle
+            {
+                Name = "keyIcon",
+                Width = 30,
+                Height = 30,
+                Fill = WindowIcon.Fill,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            Grid.SetRow(keyIcon, MainPage.mainPageInstance.rows);
+            Grid.SetColumn(keyIcon, 0);
             Label keyLabel = new Label
             {
                 Name = "keyLabel",
@@ -121,13 +190,13 @@ namespace KeyRemap
             RowDefinition gridRow = new RowDefinition();
             gridRow.Height = new GridLength(60);
             MainPage.mainPageInstance.BodyContainer.RowDefinitions.Add(gridRow);
-
             MainPage.mainPageInstance.BodyContainer.Children.Add(rowBody);
+            MainPage.mainPageInstance.BodyContainer.Children.Add(keyIcon);
             MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel);
             MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel2);
-
-            //Fill="#FF292C31" Height="44" Canvas.Left="72" RadiusY="10" RadiusX="10" Stroke="#FF34373B" Canvas.Top="25" Width="494"/>
-            MainPage.mainPageInstance.rows += 1;
+            MainPage.mainPageInstance.BodyContainer.Children.Add(rowBackground);
+        //Fill="#FF292C31" Height="44" Canvas.Left="72" RadiusY="10" RadiusX="10" Stroke="#FF34373B" Canvas.Top="25" Width="494"/>
+        MainPage.mainPageInstance.rows += 1;
             if (Key1Text.Text.Contains("ALT"))
             {
                 key1 = 1;
@@ -167,7 +236,7 @@ namespace KeyRemap
             {
                 hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey(KeyDictionary.keyReversed[Key3Text.Text], () =>
                 {
-                    if (MainPage.mainPageInstance.currentWindowName.Contains("Chrome"))
+                    if (windowToActivate == "*Everywhere*" || MainPage.mainPageInstance.currentWindowName.Contains(windowToActivate))
                     {
                         this.Dispatcher.Invoke(() =>
                         {
@@ -211,7 +280,7 @@ namespace KeyRemap
                     hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey((KeyboardHookLibrary.ModifierKeys)key1, KeyDictionary.keyReversed[Key3Text.Text], () =>
                     {
                         Console.WriteLine("WORKING1");
-                        if (MainPage.mainPageInstance.currentWindowName.Contains("Chrome"))
+                        if (windowToActivate == "*Everywhere*" || MainPage.mainPageInstance.currentWindowName.Contains(windowToActivate))
                         {
                             this.Dispatcher.Invoke(() =>
                             {
@@ -259,7 +328,7 @@ namespace KeyRemap
                 hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey((KeyboardHookLibrary.ModifierKeys)key2, KeyDictionary.keyReversed[Key3Text.Text], () =>
                 {
                     Console.WriteLine("WORKING");
-                    if (MainPage.mainPageInstance.currentWindowName.Contains("Chrome")) {
+                    if (windowToActivate == "*Everywhere*" || MainPage.mainPageInstance.currentWindowName.Contains(windowToActivate)) {
                         this.Dispatcher.Invoke(() =>
                         {
                             if (Key4Text.Text == " " && Key5Text.Text == " ")
@@ -307,7 +376,7 @@ namespace KeyRemap
             {
                 hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey(new[] { (KeyboardHookLibrary.ModifierKeys)key1 , (KeyboardHookLibrary.ModifierKeys)key2 }, KeyDictionary.keyReversed[Key3Text.Text], () =>
                 {
-                    if (MainPage.mainPageInstance.currentWindowName.Contains("Chrome"))
+                    if (windowToActivate == "*Everywhere*" || MainPage.mainPageInstance.currentWindowName.Contains(windowToActivate))
                     {
                         this.Dispatcher.Invoke(() =>
                         {
@@ -532,9 +601,22 @@ namespace KeyRemap
             }
                     }
 
-        private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void CancelButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            this.NavigationService.GoBack();
+        }
 
+        private void WindowList_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            WindowDropDown.Visibility = Visibility.Visible;
+        }
+
+        private void WindowDropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            WindowName.Text = WindowDropDown.SelectedItem.ToString();
+            windowToActivate = WindowName.Text;
+            WindowIcon.Fill = processIconList[WindowDropDown.SelectedIndex];
+            WindowDropDown.Visibility = Visibility.Hidden;
         }
 
         private void AddWindow_Loaded(object sender, RoutedEventArgs e)
