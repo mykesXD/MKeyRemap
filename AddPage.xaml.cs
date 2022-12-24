@@ -1,6 +1,7 @@
 ﻿using InputSimulatorStandard.Native;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -27,9 +28,7 @@ namespace KeyRemap
         Brush rowColor;
         Brush rowStrokeColor;
         bool[] KeyFocused;
-        public string[] remap;
-        public string keyMap1;
-        public string keyMap2;
+        public List<String> remap;
         public int key1, key2;
         public static AddPage addPageInstance;
         public Guid hotkeyID;
@@ -40,6 +39,7 @@ namespace KeyRemap
         public string windowToActivate;
         public AddPage()
         {
+
             processHWNDList = new List<IntPtr>();
             processNameList = new List<String>();
             processIconList = new List<ImageBrush>();
@@ -73,7 +73,6 @@ namespace KeyRemap
             InitializeComponent();
             addPageInstance = this;
             WindowDropDown.ItemsSource = processNameList;
-
             Key1DropDown.ItemsSource = SelectableControlKeys;
             Key2DropDown.ItemsSource = SelectableControlKeys;
             Key4DropDown.ItemsSource = SelectableControlKeys;
@@ -83,17 +82,40 @@ namespace KeyRemap
             KeyFocused = new bool[6];
             for (int i = 0; i < KeyFocused.Length; i++)
                 KeyFocused[i] = false;
+            if (MainPage.mainPageInstance.editPageOpen)
+            {
+                windowToActivate = MainPage.mainPageInstance.hotkeyWindowList[MainPage.mainPageInstance.selectedRowIndex];
+                WindowName.Text = windowToActivate;
+                WindowIcon.Fill = MainPage.mainPageInstance.hotkeyIconList[MainPage.mainPageInstance.selectedRowIndex];
+                Key1Text.Text = MainPage.mainPageInstance.hotkeyList[MainPage.mainPageInstance.selectedRowIndex][0];
+                Key2Text.Text = MainPage.mainPageInstance.hotkeyList[MainPage.mainPageInstance.selectedRowIndex][1];
+                Key3Text.Text = MainPage.mainPageInstance.hotkeyList[MainPage.mainPageInstance.selectedRowIndex][2];
+                Key4Text.Text = MainPage.mainPageInstance.hotkeyList[MainPage.mainPageInstance.selectedRowIndex][3];
+                Key5Text.Text = MainPage.mainPageInstance.hotkeyList[MainPage.mainPageInstance.selectedRowIndex][4];
+                Key6Text.Text = MainPage.mainPageInstance.hotkeyList[MainPage.mainPageInstance.selectedRowIndex][5];
+            }
         }
         public void rowBody_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Rectangle rowBody = sender as Rectangle;
-            rowBody.StrokeThickness = 1;
+            Rectangle rowBody = Util.FindVisualParent<Rectangle>(sender as Rectangle);
+            MainPage.mainPageInstance.selectedRowIndex = (int)rowBody.GetValue(Grid.RowProperty);
 
+            for (int i = 0; i < MainPage.mainPageInstance.rows; i++)
+            {
+                var pain = Util.ChildrenInRow(MainPage.mainPageInstance.BodyContainer, i);
+                Rectangle painer = (Rectangle)pain.ToList()[4];
+                painer.StrokeThickness = 0;
+            }
+            rowBody.StrokeThickness = 1;
         }
         public void ApplyButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            remap = new string[] { Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text };
-            for (int i = 0; i < remap.Length; i++)
+            //Builds the Key remap text used for Homepage
+            remap = new List<String> { Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text };
+            string keyMap1 = "";
+            string keyMap2 = "";
+            bool hotkeyAlreadyRegistered = false;
+            for (int i = 0; i < remap.Count; i++)
             {
                 if (i < 3) {
                     if (remap[i] != " ")
@@ -117,313 +139,155 @@ namespace KeyRemap
                     }
                 }
             }
-            rowColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF292C31");
-            rowStrokeColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF34373B");
-            Rectangle rowBackground = new Rectangle
+            //Prevents same hotkey with same activation window from getting registered
+            if (MainPage.mainPageInstance.realHotkeyList.Contains(keyMap1))
             {
-                Name = string.Format("RemapBackground{0}", MainPage.mainPageInstance.rows),
-                Width = 590,
-                Height = 56,
-                Fill = Brushes.Transparent,
-                StrokeThickness = 0,
-                Stroke = (SolidColorBrush)new BrushConverter().ConvertFrom("#0094FF"),
-                RadiusX = 10,
-                RadiusY = 10,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, 2, 0, 2),
-            };            
-            rowBackground.MouseLeftButtonDown += rowBody_MouseLeftButtonDown;
-            Grid.SetRow(rowBackground, MainPage.mainPageInstance.rows);
-            Grid.SetColumn(rowBackground, 0);
-            Grid.SetColumnSpan(rowBackground, 4);
-            Rectangle rowBody = new Rectangle
-            {
-                Name = string.Format("RemapRow{0}", MainPage.mainPageInstance.rows),
-                Width = 494,
-                Height = 44,
-                Fill = rowColor,
-                StrokeThickness = 1,
-                Stroke = rowStrokeColor,
-                RadiusX = 10,
-                RadiusY = 10,
-                Margin = new Thickness(5, 8, 5, 8),
-            };
-            Grid.SetRow(rowBody, MainPage.mainPageInstance.rows);
-            Grid.SetColumn(rowBody, 1);
-            Grid.SetColumnSpan(rowBody, 3);
-            Rectangle keyIcon = new Rectangle
-            {
-                Name = "keyIcon",
-                Width = 30,
-                Height = 30,
-                Fill = WindowIcon.Fill,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-            Grid.SetRow(keyIcon, MainPage.mainPageInstance.rows);
-            Grid.SetColumn(keyIcon, 0);
-            Label keyLabel = new Label
-            {
-                Name = "keyLabel",
-                Content = keyMap1,
-                FontSize = 20,
-                Foreground = new SolidColorBrush(Colors.White),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-            Grid.SetRow(keyLabel, MainPage.mainPageInstance.rows);
-            Grid.SetColumn(keyLabel, 1);
-
-            Label keyLabel2 = new Label
-            {
-                Name = "keyLabel2",
-                Content = keyMap2,
-                FontSize = 20,
-                Foreground = new SolidColorBrush(Colors.White),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-            Grid.SetRow(keyLabel2, MainPage.mainPageInstance.rows);
-            Grid.SetColumn(keyLabel2, 3);
-
-            RowDefinition gridRow = new RowDefinition();
-            gridRow.Height = new GridLength(60);
-            MainPage.mainPageInstance.BodyContainer.RowDefinitions.Add(gridRow);
-            MainPage.mainPageInstance.BodyContainer.Children.Add(rowBody);
-            MainPage.mainPageInstance.BodyContainer.Children.Add(keyIcon);
-            MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel);
-            MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel2);
-            MainPage.mainPageInstance.BodyContainer.Children.Add(rowBackground);
-        //Fill="#FF292C31" Height="44" Canvas.Left="72" RadiusY="10" RadiusX="10" Stroke="#FF34373B" Canvas.Top="25" Width="494"/>
-        MainPage.mainPageInstance.rows += 1;
-            if (Key1Text.Text.Contains("ALT"))
-            {
-                key1 = 1;
-            } else if (Key1Text.Text.Contains("CTRL")){
-                key1 = 2;
-            }else if (Key1Text.Text.Contains("SHIFT")){
-                key1 = 4;
+                if (MainPage.mainPageInstance.hotkeyWindowList[MainPage.mainPageInstance.realHotkeyList.IndexOf(keyMap1)] == WindowName.Text)
+                {
+                    hotkeyAlreadyRegistered = true;
+                }
+                else
+                {
+                    hotkeyAlreadyRegistered = false;
+                }
             }
-            else if (Key1Text.Text.Contains("WIN")){
-                key1 = 8;
+            else {
+                hotkeyAlreadyRegistered = false; ;
+            }
+            if (hotkeyAlreadyRegistered)
+            {
+                Console.WriteLine("ALREADY REGISTERED");
             }
             else
             {
-                key1 = 0;
-            }
-            if (Key2Text.Text.Contains("ALT"))
-            {
-                key2 = 1;
-            }
-            else if (Key2Text.Text.Contains("CTRL"))
-            {
-                key2 = 2;
-            }
-            else if (Key2Text.Text.Contains("SHIFT"))
-            {
-                key2 = 4;
-            }
-            else if (Key2Text.Text.Contains("WIN"))
-            {
-                key2 = 8;
-            }
-            else
-            {
-                key2 = 0;
-            }
-            if (key1 == 0 && key2 == 0)
-            {
-                hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey(KeyDictionary.keyReversed[Key3Text.Text], () =>
+                MainPage.mainPageInstance.realHotkeyList.Add(keyMap1);
+                Console.WriteLine("NEW REGISTER");
+                rowColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF292C31");
+                rowStrokeColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF34373B");
+                Rectangle rowBackground = new Rectangle
                 {
-                    if (windowToActivate == "*Everywhere*" || MainPage.mainPageInstance.currentWindowName.Contains(windowToActivate))
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            if (Key4Text.Text == " " && Key5Text.Text == " ")
-                            {
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                            }
-                            else if (Key4Text.Text != " " && Key5Text.Text == " ")
-                            {
-                                Thread.Sleep(delay);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                            }
-                            else if (Key4Text.Text == " " && Key5Text.Text != " ")
-                            {
-                                Thread.Sleep(delay);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                            }
-                            else if (Key4Text.Text != " " && Key5Text.Text != " ")
-                            {
-                                Thread.Sleep(delay);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                            }
-                        });
-                    }
-                    else
-                    {
-                        this.Dispatcher.Invoke(() => {
-                            MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key3Text.Text]);
-                        });
-                    }
-                },true);
-            } else if (key2 == 0 && key1 > 0) {
-                    hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey((KeyboardHookLibrary.ModifierKeys)key1, KeyDictionary.keyReversed[Key3Text.Text], () =>
-                    {
-                        Console.WriteLine("WORKING1");
-                        if (windowToActivate == "*Everywhere*" || MainPage.mainPageInstance.currentWindowName.Contains(windowToActivate))
-                        {
-                            this.Dispatcher.Invoke(() =>
-                            {
-                                if (Key4Text.Text == " " && Key5Text.Text == " ")
-                                {
-                                    Thread.Sleep(delay);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                }
-                                else if (Key4Text.Text != " " && Key5Text.Text == " ")
-                                {
-                                    Thread.Sleep(delay);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                }
-                                else if (Key4Text.Text == " " && Key5Text.Text != " ")
-                                {
-                                    Thread.Sleep(delay);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                                }
-                                else if (Key4Text.Text != " " && Key5Text.Text != " ")
-                                {
-                                    Thread.Sleep(delay);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                    MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                                }
-                            });
-                        }
-                        else
-                        {
-                            this.Dispatcher.Invoke(() =>
-                            {
-                                MainPage.mainPageInstance.keySimulator.Keyboard.ModifiedKeyStroke((VirtualKeyCode)KeyDictionary.controlKeyDictionary[key1], (VirtualKeyCode)KeyDictionary.keyReversed[Key3Text.Text]);
-                            });
-                        }
-                    }, true);
-            }
-            else if (key1 == 0 && key2 > 0)
-            {
-                hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey((KeyboardHookLibrary.ModifierKeys)key2, KeyDictionary.keyReversed[Key3Text.Text], () =>
-                {
-                    Console.WriteLine("WORKING");
-                    if (windowToActivate == "*Everywhere*" || MainPage.mainPageInstance.currentWindowName.Contains(windowToActivate)) {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            if (Key4Text.Text == " " && Key5Text.Text == " ")
-                            {
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
+                    Name = string.Format("RemapBackground{0}", MainPage.mainPageInstance.rows),
+                    Width = 588,
+                    Height = 56,
+                    Fill = Brushes.Transparent,
+                    StrokeThickness = 0,
+                    Stroke = (SolidColorBrush)new BrushConverter().ConvertFrom("#0094FF"),
+                    RadiusX = 10,
+                    RadiusY = 10,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(0, 2, 2, 2),
+                };
 
-                            }
-                            else if (Key4Text.Text != " " && Key5Text.Text == " ")
-                            {
-                                Thread.Sleep(delay);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                            }
-                            else if (Key4Text.Text == " " && Key5Text.Text != " ")
-                            {
-                                Thread.Sleep(delay);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                            }
-                            else if (Key4Text.Text != " " && Key5Text.Text != " ")
-                            {
-                                Thread.Sleep(delay);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                            }
-                        });
-                    }
-                    else
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            Console.WriteLine("Bruh");
-                            MainPage.mainPageInstance.keySimulator.Keyboard.ModifiedKeyStroke((VirtualKeyCode)KeyDictionary.controlKeyDictionary[key2], (VirtualKeyCode)KeyDictionary.keyReversed[Key3Text.Text]);
-                        });
-                    }
+                rowBackground.MouseLeftButtonDown += rowBody_MouseLeftButtonDown;
 
-                }, true);
-            }
-            else if (key1 > 0 && key2 > 0)
-            {
-                hotkeyID = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey(new[] { (KeyboardHookLibrary.ModifierKeys)key1 , (KeyboardHookLibrary.ModifierKeys)key2 }, KeyDictionary.keyReversed[Key3Text.Text], () =>
+                Grid.SetRow(rowBackground, MainPage.mainPageInstance.rows);
+                Grid.SetColumn(rowBackground, 0);
+                Grid.SetColumnSpan(rowBackground, 4);
+                Rectangle rowBody = new Rectangle
                 {
-                    if (windowToActivate == "*Everywhere*" || MainPage.mainPageInstance.currentWindowName.Contains(windowToActivate))
+                    Name = string.Format("RemapRow{0}", MainPage.mainPageInstance.rows),
+                    Width = 494,
+                    Height = 44,
+                    Fill = rowColor,
+                    StrokeThickness = 1,
+                    Stroke = rowStrokeColor,
+                    RadiusX = 10,
+                    RadiusY = 10,
+                    Margin = new Thickness(5, 8, 5, 8),
+                };
+                Grid.SetRow(rowBody, MainPage.mainPageInstance.rows);
+                Grid.SetColumn(rowBody, 1);
+                Grid.SetColumnSpan(rowBody, 3);
+                Rectangle keyIcon = new Rectangle
+                {
+                    Name = "keyIcon",
+                    Width = 30,
+                    Height = 30,
+                    Fill = WindowIcon.Fill,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                Grid.SetRow(keyIcon, MainPage.mainPageInstance.rows);
+                Grid.SetColumn(keyIcon, 0);
+                Label keyLabel = new Label
+                {
+                    Name = "keyLabel",
+                    Content = keyMap1,
+                    FontSize = 20,
+                    Foreground = new SolidColorBrush(Colors.White),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                Grid.SetRow(keyLabel, MainPage.mainPageInstance.rows);
+                Grid.SetColumn(keyLabel, 1);
+
+                Label keyLabel2 = new Label
+                {
+                    Name = "keyLabel2",
+                    Content = keyMap2,
+                    FontSize = 20,
+                    Foreground = new SolidColorBrush(Colors.White),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                Grid.SetRow(keyLabel2, MainPage.mainPageInstance.rows);
+                Grid.SetColumn(keyLabel2, 3);
+
+                RowDefinition gridRow = new RowDefinition();
+                gridRow.Height = new GridLength(60);
+                if (MainPage.mainPageInstance.editPageOpen)
+                {
+                    foreach (Keymap k in MainPage.mainPageInstance.keyMapList)
                     {
-                        this.Dispatcher.Invoke(() =>
+                        if (k.row == MainPage.mainPageInstance.selectedRowIndex)
                         {
-                            Console.WriteLine("2 detected");
-                            if (Key4Text.Text == " " && Key5Text.Text == " ")
-                            {
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                            }
-                            else if (Key4Text.Text != " " && Key5Text.Text == " ")
-                            {
-                                Thread.Sleep(delay);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                            }
-                            else if (Key4Text.Text == " " && Key5Text.Text != " ")
-                            {
-                                Thread.Sleep(delay);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                            }
-                            else if (Key4Text.Text != " " && Key5Text.Text != " ")
-                            {
-                                Thread.Sleep(delay);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyDown((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[Key6Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key4Text.Text]);
-                                MainPage.mainPageInstance.keySimulator.Keyboard.KeyUp((VirtualKeyCode)KeyDictionary.keyReversed[Key5Text.Text]);
-                            }
-                        });
+                            k.Unregister();
+                        }
                     }
-                    else
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            MainPage.mainPageInstance.keySimulator.Keyboard.ModifiedKeyStroke(new[] { (VirtualKeyCode)KeyDictionary.controlKeyDictionary[key1], (VirtualKeyCode)KeyDictionary.controlKeyDictionary[key2] }, (VirtualKeyCode)KeyDictionary.keyReversed[Key3Text.Text]);
-                        });
-                    }
-                },true);
+                    //MainPage.mainPageInstance.keyboardHookManager.UnregisterHotkey(MainPage.mainPageInstance.hotkeyIDList[MainPage.mainPageInstance.selectedRowIndex]);
+                    var pain = Util.ChildrenInRow(MainPage.mainPageInstance.BodyContainer, MainPage.mainPageInstance.selectedRowIndex);
+                    Rectangle icon = (Rectangle)pain.ToList()[1];
+                    Label label1 = (Label)pain.ToList()[2];
+                    Label label2 = (Label)pain.ToList()[3];
+                    icon.Fill = WindowIcon.Fill;
+                    label1.Content = keyMap1;
+                    label2.Content = keyMap2;
+                }
+                else
+                {
+                    MainPage.mainPageInstance.BodyContainer.RowDefinitions.Add(gridRow);
+                    MainPage.mainPageInstance.BodyContainer.Children.Add(rowBody);
+                    MainPage.mainPageInstance.BodyContainer.Children.Add(keyIcon);
+                    MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel);
+                    MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel2);
+                    MainPage.mainPageInstance.BodyContainer.Children.Add(rowBackground);
+                    MainPage.mainPageInstance.rows += 1;
+                }
+                //Fill="#FF292C31" Height="44" Canvas.Left="72" RadiusY="10" RadiusX="10" Stroke="#FF34373B" Canvas.Top="25" Width="494"/>
+                Keymap keyremap = new Keymap(Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text, WindowName.Text,MainPage.mainPageInstance.rows);
+                keyremap.Register();
+                MainPage.mainPageInstance.keyMapList.Add(keyremap);
+                if (MainPage.mainPageInstance.editPageOpen)
+                {
+                    MainPage.mainPageInstance.hotkeyIDList[MainPage.mainPageInstance.selectedRowIndex] = hotkeyID;
+                    MainPage.mainPageInstance.hotkeyList[MainPage.mainPageInstance.selectedRowIndex] = remap;
+                    MainPage.mainPageInstance.hotkeyWindowList[MainPage.mainPageInstance.selectedRowIndex] = WindowName.Text;
+                    MainPage.mainPageInstance.hotkeyIconList[MainPage.mainPageInstance.selectedRowIndex] = WindowIcon.Fill;
+                }
+                else
+                {
+                    MainPage.mainPageInstance.hotkeyIDList.Add(hotkeyID);
+                    MainPage.mainPageInstance.hotkeyList.Add(remap);
+                    MainPage.mainPageInstance.hotkeyWindowList.Add(WindowName.Text);
+                    MainPage.mainPageInstance.hotkeyIconList.Add(WindowIcon.Fill);
+                }
+                Console.WriteLine("{0} HOTKEY ID", hotkeyID);
+                MainPage.mainPageInstance.editPageOpen = false;
+                this.NavigationService.GoBack();
             }
-            MainPage.mainPageInstance.hotkeyIDList.Add(hotkeyID);
-            this.NavigationService.GoBack();
         }
 
-        //Can't get KeyDown so I have to dirty my hands
         private void Key1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Key1DropDown.Visibility = Visibility.Visible;
@@ -603,6 +467,7 @@ namespace KeyRemap
 
         private void CancelButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            MainPage.mainPageInstance.editPageOpen = false;
             this.NavigationService.GoBack();
         }
 

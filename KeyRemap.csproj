@@ -41,8 +41,8 @@
     <Reference Include="InputSimulatorStandard, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\InputSimulatorStandard.1.0.0\lib\netstandard2.0\InputSimulatorStandard.dll</HintPath>
     </Reference>
-    <Reference Include="KeyboardHookLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\KeyboardHookLibrary.1.0.0\lib\net472\KeyboardHookLibrary.dll</HintPath>
+    <Reference Include="KeyboardHookLibrary, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\KeyboardHookLibrary.2.0.0\lib\net472\KeyboardHookLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -81,10 +81,12 @@
     </Compile>
     <Compile Include="GlobalHook.cs" />
     <Compile Include="KeyDictionary.cs" />
+    <Compile Include="Keymap.cs" />
     <Compile Include="LowLevelKeyboardListener.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Util.cs" />
     <Compile Include="ViewModels\AddViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />

@@ -8,7 +8,7 @@
       Height="520" Width="660" Background="#FF16191E"
       Title="MainPage"
       Name="MenuWindow" Loaded="MenuWindow_Loaded">
-    <Canvas Name="ContainerCanvas">
+    <Canvas Name="ContainerCanvas" MouseLeftButtonDown="ContainerCanvas_MouseLeftButtonDown" Background="#FF16191E">
         <Rectangle x:Name="CloseButton" HorizontalAlignment="Left" Height="22" Margin="634,2,0,0" VerticalAlignment="Top" Width="22" MouseLeftButtonDown="CloseButton_MouseLeftButtonDown">
             <Rectangle.Fill>
                 <ImageBrush ImageSource="image/close_ring.png"/>
@@ -21,7 +21,7 @@
         </Rectangle>
         <ScrollViewer Height="406" Canvas.Left="26" Canvas.Top="109" Width="629">
             <Canvas Height="527">
-                <Rectangle Name="BodyBackground" RadiusX="10" RadiusY="10" Height="712" VerticalAlignment="Top" Fill="#FF1E2126" Stroke="#FF292C31" Canvas.Left="3" Canvas.Top="3" Grid.ColumnSpan="3" Grid.RowSpan="3" Width="604"/>
+                <Rectangle Name="BodyBackground" RadiusX="10" RadiusY="10" Height="712" VerticalAlignment="Top" Fill="#FF1E2126" Stroke="#FF292C31" Canvas.Left="3" Canvas.Top="3" Grid.ColumnSpan="3" Grid.RowSpan="3" Width="604" MouseLeftButtonDown="BodyBackground_MouseLeftButtonDown"/>
                 <Grid Name="BodyContainer" Height="710" Width="602" Canvas.Left="7" Canvas.Top="11">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60"/>
