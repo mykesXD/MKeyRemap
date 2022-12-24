@@ -167,6 +167,11 @@
 
     <Canvas>
         <TextBlock TextAlignment="Center" TextTrimming="CharacterEllipsis" Name="ApplyLabel" TextWrapping="Wrap" Text="APPLY:"  FontSize="25" Foreground="White" Canvas.Left="105" Canvas.Top="259" Height="32" Width="139" FontWeight="Bold"/>
+        <Rectangle Name="WindowTest" RadiusX="10" RadiusY="10" Height="74" Width="77" Canvas.Left="523" Canvas.Top="304" Stroke="#FF34373B">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="image/Settings.png"/>
+            </Rectangle.Fill>
+        </Rectangle>
         <Rectangle Name="WindowList" RadiusX="10" RadiusY="10" Height="65" Width="215" Fill="#FF292C31" Canvas.Left="257" Canvas.Top="239" Stroke="#FF34373B" MouseLeftButtonDown="WindowList_MouseLeftButtonDown"/>
         <Rectangle Name="WindowIcon" RadiusX="10" RadiusY="10" Height="38" Width="38" Canvas.Left="266" Canvas.Top="253" MouseLeftButtonDown="WindowList_MouseLeftButtonDown">
             <Rectangle.Fill>

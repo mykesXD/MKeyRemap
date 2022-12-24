@@ -1,8 +1,10 @@
 ﻿using InputSimulatorStandard.Native;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -36,6 +38,8 @@ namespace KeyRemap
         public List<IntPtr> processHWNDList;
         public List<String> processNameList;
         public List<ImageBrush> processIconList;
+        public List<System.Drawing.Bitmap> processIcon;
+
         public string windowToActivate;
         public AddPage()
         {
@@ -43,6 +47,7 @@ namespace KeyRemap
             processHWNDList = new List<IntPtr>();
             processNameList = new List<String>();
             processIconList = new List<ImageBrush>();
+            processIcon = new List<System.Drawing.Bitmap>();
             windowToActivate = "*Everywhere*";
             foreach (KeyValuePair<IntPtr, string> window in Win32.GetOpenWindows())
             {
@@ -55,23 +60,34 @@ namespace KeyRemap
                 if (p == "")
                 {
                     processNameList.Add(title);
-                    Console.WriteLine("{0}^", title);
+                    //Console.WriteLine("{0}^", title);
                 }
                 else
                 {
                     processNameList.Add(p);
-                    Console.WriteLine(p);
+                    //Console.WriteLine(p);
                 }
                 using (System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)procId).MainModule.FileName))
                 {
+                    processIcon.Add(ico.ToBitmap());
                     processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
                 }
             }
+            byte[] bytes;
+            using (var ms = new MemoryStream())
+            {
+                processIcon[2].Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                bytes = ms.ToArray();
+            }
+            var base64String = Convert.ToBase64String(bytes);
+            //base64String = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAATXSURBVFhHvZZZTxtXFMfnI/ARUAKJ+lJZVQ3GxARVjdoECANhsSG0fqoUVS0uq1jMGIxrMIttwBgwEVFVKU8VlcEYbPCwmS3QIelbXuYjTMBUfTw9dxib8TYqIuRIP92R8Z3ff869cw11G8WUsjmTNRz724v3fNT7z8K+999c6U+fpmylO2x/ySb0aDdgx3MhsvupggyWbr2yPdyCAQzQVbQOO1MYIA4J4rnFINaSLcsgigdLMIDuMsA2ijOBgVj2YwaxlrAWK8rj9OtYDBCG7UkUprAljTuTF5w0/WY1oGNNCD71FcyDCHRqQrA1gUIFpFtQ1IKRy5l//nez18hdqy2MjqXJ06bSV7yBAdZg032hCDXXwKleNr5zzje+E+Yb3gLBZ+BM0v0Vi9GyKouOFSy6CKRixgDtmlXYdKFIAepH1Wve+igMPiKWo+cskidj4bueiyKeebCB7b7Cgq0no1m7Du2Fq8A6Y4pQ392bB0OeFxzl2zBneJuET3/KevXpS0LkTAa5nF5tGNqLAlORcRQpQH1/7yU05fug6f4cjFZGYVZ/eokhAS8PQU45XF++r3gd1zk7vZowQ74fGYuBEhhgHkgXGvNnwfiZD2b0pzxCxgTe+lNhto6jTaWLOT3aEEeezoySLAjmoshDMS3WxmgMlMAl8GEA7ADSkO8F8rQkhLeeQ3Ey9idRrq1gBd/vNTxmQ9BbHE4CP+M7NcGkJdsYQZECGGBODEDGJoRMIiGm6zkBgVRs3+xAm2YFOguD0C0FEcMUhVnSIdEqq3VHDJSgmvJRLEOaR3lqOZWnjhMQ8NT9JYMDV/Ub3GBB3OWkG6ukI05pWlqFh2OgBPUc116ONE8sT+2JcQqlIrXJo6sKQ2hJiNVm6esZKzyEIgUwwAyKr5DmidWiDhj7vorAJEqzMVFzonhohewxUIJqxI0XpyF/OhGgWx1SteNam9RLwHzNElFW3DUnWQ+t0K/nEGctcY1y6ZpqyJuGOIa7HjEA2cm4yYQOTRDacJ2bv/RD/6NNIhKRieXjopPeTzu01mwoVgADeFDuQfkU1N1x4w8IyjVBnsg7sAOkC62FAfgZQ9jLopz72TEQXBlwVx/zqSFWB89BCcqQNwX6vEmUu6A+zw0dhSs82d1JFKwIpgI/7aS5HFf1MedEGYFI49fO6sRnAo605E8PYJWQrqn6uxNQi/Jnd8bhpy/+QGEA2x4QRwnepFlMPBUJgTLeia9iNsaRseo34r4IoiQ4kILsM4rIq3Id8EL1WhQns5zxcLHTXO541TE/jq9iKmPSOFJ5CINle86V/nNQgmq67xN++Px3aC1YTqJFvZz1cCFFQoxhiLGqI5Sm46g8AuuTvTRhKpRJFczF932hpWAJ4rSqA4qHS7wcdFQ1Sh8JCKQy/PQQBh5HIWA5V0S6FSUGMan9xl/U/sQv2f+pUfqQHkFhKkMYoJ8EYFCkgHSbm9VwxYHJgWsux15xAJbHu7Dcdy5xlhHpFjevEfqQIW2PY6/YB+bbXVgynynBS9M/TqGYGXp6AHbEVr4PfSRAL4oy8oFd7BTSTs4bl718/xVpv7VsD8z4v4O/5yyFD6zfHLvWPrt22coPWDEAdsDfjdJLFvxdtyyOF0OzOfbKo4UZ43v+z64zZ/ZWU9R/5o+npwCuo3YAAAAASUVORK5CYII=";
+            //Console.WriteLine(base64String);
             delay = 200;
             string[] SelectableKeys = { "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh" , "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruhhhhhh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh" };
             string[] SelectableControlKeys = {"L-CTRL", "L-ALT", "L-SHIFT", "L-WIN", "R-CTRL", "R-ALT", "R-SHIFT", "R-WIN" };
             InitializeComponent();
             addPageInstance = this;
+            WindowTest.Fill = new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(base64String)));
             WindowDropDown.ItemsSource = processNameList;
             Key1DropDown.ItemsSource = SelectableControlKeys;
             Key2DropDown.ItemsSource = SelectableControlKeys;
@@ -111,7 +127,7 @@ namespace KeyRemap
         public void ApplyButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //Builds the Key remap text used for Homepage
-            remap = new List<String> { Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text };
+            remap = new List<string> { Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text };
             string keyMap1 = "";
             string keyMap2 = "";
             bool hotkeyAlreadyRegistered = false;
@@ -160,89 +176,33 @@ namespace KeyRemap
             }
             else
             {
-                MainPage.mainPageInstance.realHotkeyList.Add(keyMap1);
-                Console.WriteLine("NEW REGISTER");
-                rowColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF292C31");
-                rowStrokeColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF34373B");
-                Rectangle rowBackground = new Rectangle
-                {
-                    Name = string.Format("RemapBackground{0}", MainPage.mainPageInstance.rows),
-                    Width = 588,
-                    Height = 56,
-                    Fill = Brushes.Transparent,
-                    StrokeThickness = 0,
-                    Stroke = (SolidColorBrush)new BrushConverter().ConvertFrom("#0094FF"),
-                    RadiusX = 10,
-                    RadiusY = 10,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(0, 2, 2, 2),
-                };
-
-                rowBackground.MouseLeftButtonDown += rowBody_MouseLeftButtonDown;
-
-                Grid.SetRow(rowBackground, MainPage.mainPageInstance.rows);
-                Grid.SetColumn(rowBackground, 0);
-                Grid.SetColumnSpan(rowBackground, 4);
-                Rectangle rowBody = new Rectangle
-                {
-                    Name = string.Format("RemapRow{0}", MainPage.mainPageInstance.rows),
-                    Width = 494,
-                    Height = 44,
-                    Fill = rowColor,
-                    StrokeThickness = 1,
-                    Stroke = rowStrokeColor,
-                    RadiusX = 10,
-                    RadiusY = 10,
-                    Margin = new Thickness(5, 8, 5, 8),
-                };
-                Grid.SetRow(rowBody, MainPage.mainPageInstance.rows);
-                Grid.SetColumn(rowBody, 1);
-                Grid.SetColumnSpan(rowBody, 3);
-                Rectangle keyIcon = new Rectangle
-                {
-                    Name = "keyIcon",
-                    Width = 30,
-                    Height = 30,
-                    Fill = WindowIcon.Fill,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                Grid.SetRow(keyIcon, MainPage.mainPageInstance.rows);
-                Grid.SetColumn(keyIcon, 0);
-                Label keyLabel = new Label
-                {
-                    Name = "keyLabel",
-                    Content = keyMap1,
-                    FontSize = 20,
-                    Foreground = new SolidColorBrush(Colors.White),
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                Grid.SetRow(keyLabel, MainPage.mainPageInstance.rows);
-                Grid.SetColumn(keyLabel, 1);
-
-                Label keyLabel2 = new Label
-                {
-                    Name = "keyLabel2",
-                    Content = keyMap2,
-                    FontSize = 20,
-                    Foreground = new SolidColorBrush(Colors.White),
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                Grid.SetRow(keyLabel2, MainPage.mainPageInstance.rows);
-                Grid.SetColumn(keyLabel2, 3);
-
-                RowDefinition gridRow = new RowDefinition();
-                gridRow.Height = new GridLength(60);
                 if (MainPage.mainPageInstance.editPageOpen)
                 {
+                    Console.WriteLine("EDITING");
                     foreach (Keymap k in MainPage.mainPageInstance.keyMapList)
                     {
-                        if (k.row == MainPage.mainPageInstance.selectedRowIndex)
+                        Console.WriteLine(MainPage.mainPageInstance.selectedRowIndex);
+
+                        if (k.row - 1 == MainPage.mainPageInstance.selectedRowIndex)
                         {
-                            k.Unregister();
+                            try
+                            {
+                                k.Unregister();
+                            }
+                            catch
+                            {
+                                k.key1 = Key1Text.Text;
+                                k.key2 = Key2Text.Text;
+                                k.key3 = Key3Text.Text;
+                                k.key4 = Key4Text.Text;
+                                k.key5 = Key5Text.Text;
+                                k.key6 = Key6Text.Text;
+                                k.keyMap1 = keyMap1;
+                                k.keyMap2 = keyMap2;
+                                k.window = WindowName.Text;
+                                Console.WriteLine("CHANGED WINDOW: {0}", k.window);
+                                k.Register();
+                            }
                         }
                     }
                     //MainPage.mainPageInstance.keyboardHookManager.UnregisterHotkey(MainPage.mainPageInstance.hotkeyIDList[MainPage.mainPageInstance.selectedRowIndex]);
@@ -256,27 +216,26 @@ namespace KeyRemap
                 }
                 else
                 {
-                    MainPage.mainPageInstance.BodyContainer.RowDefinitions.Add(gridRow);
-                    MainPage.mainPageInstance.BodyContainer.Children.Add(rowBody);
-                    MainPage.mainPageInstance.BodyContainer.Children.Add(keyIcon);
-                    MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel);
-                    MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel2);
-                    MainPage.mainPageInstance.BodyContainer.Children.Add(rowBackground);
-                    MainPage.mainPageInstance.rows += 1;
+                    MainPage.mainPageInstance.realHotkeyList.Add(keyMap1);
+                    Row row = new Row(keyMap1,keyMap2, WindowIcon.Fill);
+                    row.Create();
+                    Keymap keymap = new Keymap(Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text, keyMap1, keyMap2, WindowName.Text, MainPage.mainPageInstance.rows);
+                    keymap.Register();
                 }
-                //Fill="#FF292C31" Height="44" Canvas.Left="72" RadiusY="10" RadiusX="10" Stroke="#FF34373B" Canvas.Top="25" Width="494"/>
-                Keymap keyremap = new Keymap(Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text, WindowName.Text,MainPage.mainPageInstance.rows);
-                keyremap.Register();
-                MainPage.mainPageInstance.keyMapList.Add(keyremap);
                 if (MainPage.mainPageInstance.editPageOpen)
                 {
-                    MainPage.mainPageInstance.hotkeyIDList[MainPage.mainPageInstance.selectedRowIndex] = hotkeyID;
+                    Console.WriteLine("HOTKEY {0}", MainPage.mainPageInstance.hotkeyList.Count);
+                    Console.WriteLine("INDEX {0}", MainPage.mainPageInstance.selectedRowIndex);
+
+                    //MainPage.mainPageInstance.hotkeyIDList[MainPage.mainPageInstance.selectedRowIndex] = hotkeyID;
                     MainPage.mainPageInstance.hotkeyList[MainPage.mainPageInstance.selectedRowIndex] = remap;
                     MainPage.mainPageInstance.hotkeyWindowList[MainPage.mainPageInstance.selectedRowIndex] = WindowName.Text;
                     MainPage.mainPageInstance.hotkeyIconList[MainPage.mainPageInstance.selectedRowIndex] = WindowIcon.Fill;
                 }
                 else
                 {
+                    Keymap keyremap = new Keymap(Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text, keyMap1,keyMap2 ,WindowName.Text, MainPage.mainPageInstance.rows);
+                    MainPage.mainPageInstance.keyMapList.Add(keyremap);
                     MainPage.mainPageInstance.hotkeyIDList.Add(hotkeyID);
                     MainPage.mainPageInstance.hotkeyList.Add(remap);
                     MainPage.mainPageInstance.hotkeyWindowList.Add(WindowName.Text);
@@ -284,6 +243,13 @@ namespace KeyRemap
                 }
                 Console.WriteLine("{0} HOTKEY ID", hotkeyID);
                 MainPage.mainPageInstance.editPageOpen = false;
+                var keyMapJson = JsonConvert.SerializeObject(MainPage.mainPageInstance.keyMapList,Formatting.Indented);
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                string filePath = System.IO.Path.Combine(path, "SaveFile.json");
+                using(StreamWriter sw = new StreamWriter(filePath))
+                {
+                    sw.Write(keyMapJson);
+                }
                 this.NavigationService.GoBack();
             }
         }

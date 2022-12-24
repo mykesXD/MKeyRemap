@@ -2,9 +2,11 @@
 using InputSimulatorStandard;
 using KeyboardHookLibrary;
 using KeyboardUtils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,6 +60,7 @@ namespace KeyRemap
         public List<Keymap> keyMapList;
         public List<Keymap> activeKeyMapList;
         public List<String> activeWindowList;
+        public List<Keymap> sortedList;
         public MainPage()
         {
             InitializeComponent();
@@ -75,6 +78,7 @@ namespace KeyRemap
             hotkeyIconList = new List<Brush>();
             keyMapList = new List<Keymap>();
             activeWindowList = new List<String>();
+            sortedList = new List<Keymap>();
             selectedRowIndex = -1;
             CompositionTarget.Rendering += MainEventTimer;
             foreach (KeyValuePair<IntPtr, string> window in Win32.GetOpenWindows())
@@ -112,24 +116,49 @@ namespace KeyRemap
             keySimulator = new InputSimulator();
             keyboardHookManager = new KeyboardHookManager();
             keyboardHookManager.Start();
+            try
+            {
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string filePath = System.IO.Path.Combine(path, "SaveFile.json");
+            string content = "";
+            using (StreamReader sr = new StreamReader(filePath))
+            {
+                content = sr.ReadToEnd();
+            }
+            keyMapList = JsonConvert.DeserializeObject<IEnumerable<Keymap>>(content).ToList();
+                foreach (Keymap keymap in keyMapList)
+                {
+                    Console.WriteLine("DADA {0}", keymap.window);
+                    Row row = new Row(keymap.keyMap1, keymap.keyMap2, processIconList[0]);
+                    row.Create();
+                    keymap.Register();
+                    List<string> remap = new List<String> { keymap.key1, keymap.key2, keymap.key3, keymap.key4, keymap.key5, keymap.key6 };
+                    hotkeyList.Add(remap);
+                    hotkeyWindowList.Add(keymap.window);
+                    hotkeyIconList.Add(processIconList[0]);
+                }
+            }
+            catch
+            {
+                Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            }
         }
         public void MainEventTimer(object sender, EventArgs e)
         {
             currentWindowName =  GetTitle(Win32.GetForegroundWindow());
-
+            //Console.WriteLine(editPageOpen);
             // Running same hotkeys that has different activation windows
             // Works when activation windows are specified but when adding *Everywhere* activation, it overrides the others
             // Sorted the list to make activations with *Everywhere* to be first so it gets overrided by specified window hotkeys
             if (currentWindowName != prevWindowName)
             {
-                List<Keymap> sortedList = keyMapList.OrderBy(o => o.window).ToList();
+                sortedList = keyMapList.OrderBy(o => o.window).ToList();
                 Console.WriteLine(currentWindowName);
                 foreach (Keymap keymap in sortedList)
                 {
-                    Console.WriteLine(keymap.window);
-                    if (currentWindowName.Contains(keymap.window) || keymap.window.Contains("Everywhere"))
+                    if (currentWindowName.Contains(keymap.window) || keymap.window.Contains("Everywhere") || currentWindowName.Contains("KeyRemap"))
                     {
-                            keymap.Register();
+                        keymap.Register();
                     }
                     else
                     {
@@ -180,7 +209,6 @@ namespace KeyRemap
         }
         private void AddButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Console.WriteLine("WTFFFFFFFFFFFFFFFFFFFF");
             addPageOpen = true;
             NavigationService.Navigate(new AddPage());
         }
