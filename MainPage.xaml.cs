@@ -109,6 +109,7 @@ namespace KeyRemap
                 }
                 using (System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)procId).MainModule.FileName))
                 {
+                    
                     processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
                 }
             }
@@ -129,18 +130,20 @@ namespace KeyRemap
                 foreach (Keymap keymap in keyMapList)
                 {
                     Console.WriteLine("DADA {0}", keymap.window);
-                    Row row = new Row(keymap.keyMap1, keymap.keyMap2, processIconList[0]);
+                    var brush = new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon)));
+                    Row row = new Row(keymap.keyMap1, keymap.keyMap2, brush);
                     row.Create();
                     keymap.Register();
                     List<string> remap = new List<String> { keymap.key1, keymap.key2, keymap.key3, keymap.key4, keymap.key5, keymap.key6 };
                     hotkeyList.Add(remap);
                     hotkeyWindowList.Add(keymap.window);
-                    hotkeyIconList.Add(processIconList[0]);
+                    hotkeyIconList.Add(new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon))));
                 }
             }
-            catch
+            catch(Exception e)
             {
                 Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                Console.WriteLine(e);
             }
         }
         public void MainEventTimer(object sender, EventArgs e)

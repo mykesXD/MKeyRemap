@@ -49,6 +49,11 @@ namespace KeyRemap
             processIconList = new List<ImageBrush>();
             processIcon = new List<System.Drawing.Bitmap>();
             windowToActivate = "*Everywhere*";
+            var icon = new System.Drawing.Icon(Application.GetResourceStream(new Uri("pack://application:,,,/image/Globe.ico")).Stream);
+            var globe = icon.ToBitmap();
+            processNameList.Add("*Everywhere*");
+            processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
+            processIcon.Add(globe);
             foreach (KeyValuePair<IntPtr, string> window in Win32.GetOpenWindows())
             {
                 IntPtr handle = window.Key;
@@ -73,13 +78,6 @@ namespace KeyRemap
                     processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
                 }
             }
-            byte[] bytes;
-            using (var ms = new MemoryStream())
-            {
-                processIcon[2].Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                bytes = ms.ToArray();
-            }
-            var base64String = Convert.ToBase64String(bytes);
             //base64String = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAATXSURBVFhHvZZZTxtXFMfnI/ARUAKJ+lJZVQ3GxARVjdoECANhsSG0fqoUVS0uq1jMGIxrMIttwBgwEVFVKU8VlcEYbPCwmS3QIelbXuYjTMBUfTw9dxib8TYqIuRIP92R8Z3ff869cw11G8WUsjmTNRz724v3fNT7z8K+999c6U+fpmylO2x/ySb0aDdgx3MhsvupggyWbr2yPdyCAQzQVbQOO1MYIA4J4rnFINaSLcsgigdLMIDuMsA2ijOBgVj2YwaxlrAWK8rj9OtYDBCG7UkUprAljTuTF5w0/WY1oGNNCD71FcyDCHRqQrA1gUIFpFtQ1IKRy5l//nez18hdqy2MjqXJ06bSV7yBAdZg032hCDXXwKleNr5zzje+E+Yb3gLBZ+BM0v0Vi9GyKouOFSy6CKRixgDtmlXYdKFIAepH1Wve+igMPiKWo+cskidj4bueiyKeebCB7b7Cgq0no1m7Du2Fq8A6Y4pQ392bB0OeFxzl2zBneJuET3/KevXpS0LkTAa5nF5tGNqLAlORcRQpQH1/7yU05fug6f4cjFZGYVZ/eokhAS8PQU45XF++r3gd1zk7vZowQ74fGYuBEhhgHkgXGvNnwfiZD2b0pzxCxgTe+lNhto6jTaWLOT3aEEeezoySLAjmoshDMS3WxmgMlMAl8GEA7ADSkO8F8rQkhLeeQ3Ey9idRrq1gBd/vNTxmQ9BbHE4CP+M7NcGkJdsYQZECGGBODEDGJoRMIiGm6zkBgVRs3+xAm2YFOguD0C0FEcMUhVnSIdEqq3VHDJSgmvJRLEOaR3lqOZWnjhMQ8NT9JYMDV/Ub3GBB3OWkG6ukI05pWlqFh2OgBPUc116ONE8sT+2JcQqlIrXJo6sKQ2hJiNVm6esZKzyEIgUwwAyKr5DmidWiDhj7vorAJEqzMVFzonhohewxUIJqxI0XpyF/OhGgWx1SteNam9RLwHzNElFW3DUnWQ+t0K/nEGctcY1y6ZpqyJuGOIa7HjEA2cm4yYQOTRDacJ2bv/RD/6NNIhKRieXjopPeTzu01mwoVgADeFDuQfkU1N1x4w8IyjVBnsg7sAOkC62FAfgZQ9jLopz72TEQXBlwVx/zqSFWB89BCcqQNwX6vEmUu6A+zw0dhSs82d1JFKwIpgI/7aS5HFf1MedEGYFI49fO6sRnAo605E8PYJWQrqn6uxNQi/Jnd8bhpy/+QGEA2x4QRwnepFlMPBUJgTLeia9iNsaRseo34r4IoiQ4kILsM4rIq3Id8EL1WhQns5zxcLHTXO541TE/jq9iKmPSOFJ5CINle86V/nNQgmq67xN++Px3aC1YTqJFvZz1cCFFQoxhiLGqI5Sm46g8AuuTvTRhKpRJFczF932hpWAJ4rSqA4qHS7wcdFQ1Sh8JCKQy/PQQBh5HIWA5V0S6FSUGMan9xl/U/sQv2f+pUfqQHkFhKkMYoJ8EYFCkgHSbm9VwxYHJgWsux15xAJbHu7Dcdy5xlhHpFjevEfqQIW2PY6/YB+bbXVgynynBS9M/TqGYGXp6AHbEVr4PfSRAL4oy8oFd7BTSTs4bl718/xVpv7VsD8z4v4O/5yyFD6zfHLvWPrt22coPWDEAdsDfjdJLFvxdtyyOF0OzOfbKo4UZ43v+z64zZ/ZWU9R/5o+npwCuo3YAAAAASUVORK5CYII=";
             //Console.WriteLine(base64String);
             delay = 200;
@@ -87,7 +85,6 @@ namespace KeyRemap
             string[] SelectableControlKeys = {"L-CTRL", "L-ALT", "L-SHIFT", "L-WIN", "R-CTRL", "R-ALT", "R-SHIFT", "R-WIN" };
             InitializeComponent();
             addPageInstance = this;
-            WindowTest.Fill = new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(base64String)));
             WindowDropDown.ItemsSource = processNameList;
             Key1DropDown.ItemsSource = SelectableControlKeys;
             Key2DropDown.ItemsSource = SelectableControlKeys;
@@ -213,34 +210,38 @@ namespace KeyRemap
                     icon.Fill = WindowIcon.Fill;
                     label1.Content = keyMap1;
                     label2.Content = keyMap2;
-                }
-                else
-                {
-                    MainPage.mainPageInstance.realHotkeyList.Add(keyMap1);
-                    Row row = new Row(keyMap1,keyMap2, WindowIcon.Fill);
-                    row.Create();
-                    Keymap keymap = new Keymap(Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text, keyMap1, keyMap2, WindowName.Text, MainPage.mainPageInstance.rows);
-                    keymap.Register();
-                }
-                if (MainPage.mainPageInstance.editPageOpen)
-                {
-                    Console.WriteLine("HOTKEY {0}", MainPage.mainPageInstance.hotkeyList.Count);
-                    Console.WriteLine("INDEX {0}", MainPage.mainPageInstance.selectedRowIndex);
-
-                    //MainPage.mainPageInstance.hotkeyIDList[MainPage.mainPageInstance.selectedRowIndex] = hotkeyID;
                     MainPage.mainPageInstance.hotkeyList[MainPage.mainPageInstance.selectedRowIndex] = remap;
                     MainPage.mainPageInstance.hotkeyWindowList[MainPage.mainPageInstance.selectedRowIndex] = WindowName.Text;
                     MainPage.mainPageInstance.hotkeyIconList[MainPage.mainPageInstance.selectedRowIndex] = WindowIcon.Fill;
                 }
                 else
                 {
-                    Keymap keyremap = new Keymap(Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text, keyMap1,keyMap2 ,WindowName.Text, MainPage.mainPageInstance.rows);
-                    MainPage.mainPageInstance.keyMapList.Add(keyremap);
+                    byte[] bytes;
+                    using (var ms = new MemoryStream())
+                    {
+                        if (WindowDropDown.SelectedIndex == -1)
+                        {
+                            processIcon[0].Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        }
+                        else
+                        {
+                            processIcon[WindowDropDown.SelectedIndex].Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        }
+                        bytes = ms.ToArray();
+                    }
+                    var base64String = Convert.ToBase64String(bytes);
+                    Row row = new Row(keyMap1,keyMap2, WindowIcon.Fill);
+                    row.Create();
+                    Keymap keymap = new Keymap(Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text, keyMap1, keyMap2, WindowName.Text, base64String, MainPage.mainPageInstance.rows);
+                    keymap.Register();
+                    MainPage.mainPageInstance.realHotkeyList.Add(keyMap1);
+                    MainPage.mainPageInstance.keyMapList.Add(keymap);
                     MainPage.mainPageInstance.hotkeyIDList.Add(hotkeyID);
                     MainPage.mainPageInstance.hotkeyList.Add(remap);
                     MainPage.mainPageInstance.hotkeyWindowList.Add(WindowName.Text);
                     MainPage.mainPageInstance.hotkeyIconList.Add(WindowIcon.Fill);
                 }
+
                 Console.WriteLine("{0} HOTKEY ID", hotkeyID);
                 MainPage.mainPageInstance.editPageOpen = false;
                 var keyMapJson = JsonConvert.SerializeObject(MainPage.mainPageInstance.keyMapList,Formatting.Indented);
