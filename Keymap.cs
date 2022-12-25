@@ -34,10 +34,9 @@ namespace KeyRemap
         public string keyMap2 { get; set; }
 
         public string icon { get; set; }
-        public int row { get; set; }
 
         Guid id;
-        public Keymap(string key1, string key2, string key3, string key4, string key5, string key6,string keyMap1,string keyMap2,string window,string icon, int row)
+        public Keymap(string key1, string key2, string key3, string key4, string key5, string key6,string keyMap1,string keyMap2,string window,string icon)
         {
             this.key1 = key1;
             this.key2 = key2;
@@ -49,7 +48,6 @@ namespace KeyRemap
             this.keyMap2 = keyMap2;
             this.window = window;
             this.icon = icon;
-            this.row = row;
         }
         public void Register()
         {

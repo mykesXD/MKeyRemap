@@ -61,6 +61,7 @@ namespace KeyRemap
         public List<Keymap> activeKeyMapList;
         public List<String> activeWindowList;
         public List<Keymap> sortedList;
+        public List<RowDefinition> rowList;
         public MainPage()
         {
             InitializeComponent();
@@ -79,6 +80,7 @@ namespace KeyRemap
             keyMapList = new List<Keymap>();
             activeWindowList = new List<String>();
             sortedList = new List<Keymap>();
+            rowList = new List<RowDefinition>();
             selectedRowIndex = -1;
             CompositionTarget.Rendering += MainEventTimer;
             foreach (KeyValuePair<IntPtr, string> window in Win32.GetOpenWindows())
@@ -119,21 +121,21 @@ namespace KeyRemap
             keyboardHookManager.Start();
             try
             {
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string filePath = System.IO.Path.Combine(path, "SaveFile.json");
-            string content = "";
-            using (StreamReader sr = new StreamReader(filePath))
-            {
-                content = sr.ReadToEnd();
-            }
-            keyMapList = JsonConvert.DeserializeObject<IEnumerable<Keymap>>(content).ToList();
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                string filePath = System.IO.Path.Combine(path, "SaveFile.json");
+                string content = "";
+                using (StreamReader sr = new StreamReader(filePath))
+                {
+                    content = sr.ReadToEnd();
+                }
+                keyMapList = JsonConvert.DeserializeObject<IEnumerable<Keymap>>(content).ToList();
                 foreach (Keymap keymap in keyMapList)
                 {
                     Console.WriteLine("DADA {0}", keymap.window);
                     var brush = new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon)));
                     Row row = new Row(keymap.keyMap1, keymap.keyMap2, brush);
                     row.Create();
-                    keymap.Register();
+                    //keymap.Register();
                     List<string> remap = new List<String> { keymap.key1, keymap.key2, keymap.key3, keymap.key4, keymap.key5, keymap.key6 };
                     hotkeyList.Add(remap);
                     hotkeyWindowList.Add(keymap.window);
@@ -149,6 +151,7 @@ namespace KeyRemap
         public void MainEventTimer(object sender, EventArgs e)
         {
             currentWindowName =  GetTitle(Win32.GetForegroundWindow());
+            //Console.WriteLine(BodyContainer.RowDefinitions.Count);
             //Console.WriteLine(editPageOpen);
             // Running same hotkeys that has different activation windows
             // Works when activation windows are specified but when adding *Everywhere* activation, it overrides the others
@@ -237,6 +240,49 @@ namespace KeyRemap
 
         private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            Console.WriteLine("DELETE CLICKED");
+
+            BodyContainer.RowDefinitions.RemoveRange(0, BodyContainer.RowDefinitions.Count);
+            BodyContainer.Children.RemoveRange(0, BodyContainer.Children.Count);
+            keyboardHookManager.UnregisterAll();
+            keyMapList.RemoveAt(selectedRowIndex);
+            rows = 0;
+            var keyMapJson = JsonConvert.SerializeObject(MainPage.mainPageInstance.keyMapList, Formatting.Indented);
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string filePath = System.IO.Path.Combine(path, "SaveFile.json");
+            using (StreamWriter sw = new StreamWriter(filePath))
+            {
+                sw.Write(keyMapJson);
+            }
+
+            try
+            {
+                path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                filePath = System.IO.Path.Combine(path, "SaveFile.json");
+                string content = "";
+                using (StreamReader sr = new StreamReader(filePath))
+                {
+                    content = sr.ReadToEnd();
+                }
+                keyMapList = JsonConvert.DeserializeObject<IEnumerable<Keymap>>(content).ToList();
+                sortedList = keyMapList.OrderBy(o => o.window).ToList();
+                foreach (Keymap keymap in sortedList)
+                {
+                    Console.WriteLine("DADA {0}", keymap.window);
+                    var brush = new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon)));
+                    Row row = new Row(keymap.keyMap1, keymap.keyMap2, brush);
+                    row.Create();
+                    //keymap.Register();
+                    List<string> remap = new List<String> { keymap.key1, keymap.key2, keymap.key3, keymap.key4, keymap.key5, keymap.key6 };
+                    hotkeyList.Add(remap);
+                    hotkeyWindowList.Add(keymap.window);
+                    hotkeyIconList.Add(new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon))));
+                }
+            }
+            catch
+            {
+                Console.WriteLine("DELETE FAIL");
+            }
         }
 
         private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -247,21 +293,21 @@ namespace KeyRemap
 
         private void BodyBackground_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            for (int i = 0; i < rows; i++)
-            {
-                var pain = Util.ChildrenInRow(BodyContainer, i);
-                Rectangle painer = (Rectangle)pain.ToList()[4];
-                painer.StrokeThickness = 0;
-            }
+            //for (int i = 0; i < rows; i++)
+            //{
+            //    var pain = Util.ChildrenInRow(BodyContainer, i);
+            //    Rectangle painer = (Rectangle)pain.ToList()[4];
+            //    painer.StrokeThickness = 0;
+            //}
         }
         private void ContainerCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            for (int i = 0; i < rows; i++)
-            {
-                var pain = Util.ChildrenInRow(BodyContainer, i);
-                Rectangle painer = (Rectangle)pain.ToList()[4];
-                painer.StrokeThickness = 0;
-            }
+            //for (int i = 0; i < rows; i++)
+            //{
+            //    var pain = Util.ChildrenInRow(BodyContainer, i);
+            //    Rectangle painer = (Rectangle)pain.ToList()[4];
+            //    painer.StrokeThickness = 0;
+            //}
         }
     }
 }

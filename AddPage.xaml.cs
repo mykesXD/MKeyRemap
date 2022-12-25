@@ -27,8 +27,6 @@ namespace KeyRemap
     /// </summary>
     public partial class AddPage : Page
     {
-        Brush rowColor;
-        Brush rowStrokeColor;
         bool[] KeyFocused;
         public List<String> remap;
         public int key1, key2;
@@ -176,34 +174,27 @@ namespace KeyRemap
                 if (MainPage.mainPageInstance.editPageOpen)
                 {
                     Console.WriteLine("EDITING");
-                    foreach (Keymap k in MainPage.mainPageInstance.keyMapList)
+                    var k = MainPage.mainPageInstance.keyMapList[MainPage.mainPageInstance.selectedRowIndex];
+                    try
                     {
-                        Console.WriteLine(MainPage.mainPageInstance.selectedRowIndex);
-
-                        if (k.row - 1 == MainPage.mainPageInstance.selectedRowIndex)
-                        {
-                            try
-                            {
-                                k.Unregister();
-                            }
-                            catch
-                            {
-                                k.key1 = Key1Text.Text;
-                                k.key2 = Key2Text.Text;
-                                k.key3 = Key3Text.Text;
-                                k.key4 = Key4Text.Text;
-                                k.key5 = Key5Text.Text;
-                                k.key6 = Key6Text.Text;
-                                k.keyMap1 = keyMap1;
-                                k.keyMap2 = keyMap2;
-                                k.window = WindowName.Text;
-                                Console.WriteLine("CHANGED WINDOW: {0}", k.window);
-                                k.Register();
-                            }
-                        }
+                        k.Unregister();
                     }
-                    //MainPage.mainPageInstance.keyboardHookManager.UnregisterHotkey(MainPage.mainPageInstance.hotkeyIDList[MainPage.mainPageInstance.selectedRowIndex]);
-                    var pain = Util.ChildrenInRow(MainPage.mainPageInstance.BodyContainer, MainPage.mainPageInstance.selectedRowIndex);
+                    catch
+                    {
+                        k.key1 = Key1Text.Text;
+                        k.key2 = Key2Text.Text;
+                        k.key3 = Key3Text.Text;
+                        k.key4 = Key4Text.Text;
+                        k.key5 = Key5Text.Text;
+                        k.key6 = Key6Text.Text;
+                        k.keyMap1 = keyMap1;
+                        k.keyMap2 = keyMap2;
+                        k.window = WindowName.Text;
+                        Console.WriteLine("CHANGED WINDOW: {0}", k.window);
+                        k.Register();
+                    }
+                        //MainPage.mainPageInstance.keyboardHookManager.UnregisterHotkey(MainPage.mainPageInstance.hotkeyIDList[MainPage.mainPageInstance.selectedRowIndex]);
+                        var pain = Util.ChildrenInRow(MainPage.mainPageInstance.BodyContainer, MainPage.mainPageInstance.selectedRowIndex);
                     Rectangle icon = (Rectangle)pain.ToList()[1];
                     Label label1 = (Label)pain.ToList()[2];
                     Label label2 = (Label)pain.ToList()[3];
@@ -232,7 +223,7 @@ namespace KeyRemap
                     var base64String = Convert.ToBase64String(bytes);
                     Row row = new Row(keyMap1,keyMap2, WindowIcon.Fill);
                     row.Create();
-                    Keymap keymap = new Keymap(Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text, keyMap1, keyMap2, WindowName.Text, base64String, MainPage.mainPageInstance.rows);
+                    Keymap keymap = new Keymap(Key1Text.Text, Key2Text.Text, Key3Text.Text, Key4Text.Text, Key5Text.Text, Key6Text.Text, keyMap1, keyMap2, WindowName.Text, base64String);
                     keymap.Register();
                     MainPage.mainPageInstance.realHotkeyList.Add(keyMap1);
                     MainPage.mainPageInstance.keyMapList.Add(keymap);

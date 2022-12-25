@@ -129,6 +129,7 @@ namespace KeyRemap
             RowDefinition gridRow = new RowDefinition();
             gridRow.Height = new GridLength(60);
             MainPage.mainPageInstance.BodyContainer.RowDefinitions.Add(gridRow);
+            MainPage.mainPageInstance.rowList.Add(gridRow);
             MainPage.mainPageInstance.BodyContainer.Children.Add(rowBody);
             MainPage.mainPageInstance.BodyContainer.Children.Add(keyIcon);
             MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel);
