@@ -1,4 +1,5 @@
-﻿using InputSimulatorStandard.Native;
+﻿using ImageProcessor;
+using InputSimulatorStandard.Native;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -37,11 +38,13 @@ namespace KeyRemap
         public List<String> processNameList;
         public List<ImageBrush> processIconList;
         public List<System.Drawing.Bitmap> processIcon;
-
+        public Bind bind;
         public string windowToActivate;
         public AddPage()
         {
-
+            bind = new Bind();
+            bind.BinderKey = false;
+            DataContext = bind;
             processHWNDList = new List<IntPtr>();
             processNameList = new List<String>();
             processIconList = new List<ImageBrush>();
@@ -59,28 +62,35 @@ namespace KeyRemap
 
                 IntPtr procId;
                 Win32.GetWindowThreadProcessId(handle, out procId);
-                var p = Process.GetProcessById((int)procId).MainModule.FileVersionInfo.FileDescription;
-                if (p == "")
+                try
                 {
-                    processNameList.Add(title);
-                    //Console.WriteLine("{0}^", title);
+                    var p = Process.GetProcessById((int)procId).MainModule.FileVersionInfo.FileDescription;
+                    if (p == "")
+                    {
+                        processNameList.Add(title);
+                        //Console.WriteLine("{0}^", title);
+                    }
+                    else
+                    {
+                        processNameList.Add(p);
+                        //Console.WriteLine(p);
+                    }
+                    using (System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)procId).MainModule.FileName))
+                    {
+                        processIcon.Add(ico.ToBitmap());
+                        processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
+                    }
                 }
-                else
+                catch
                 {
-                    processNameList.Add(p);
-                    //Console.WriteLine(p);
-                }
-                using (System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)procId).MainModule.FileName))
-                {
-                    processIcon.Add(ico.ToBitmap());
-                    processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
+                    Console.WriteLine("SYSTEM FILE");
                 }
             }
             //base64String = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAATXSURBVFhHvZZZTxtXFMfnI/ARUAKJ+lJZVQ3GxARVjdoECANhsSG0fqoUVS0uq1jMGIxrMIttwBgwEVFVKU8VlcEYbPCwmS3QIelbXuYjTMBUfTw9dxib8TYqIuRIP92R8Z3ff869cw11G8WUsjmTNRz724v3fNT7z8K+999c6U+fpmylO2x/ySb0aDdgx3MhsvupggyWbr2yPdyCAQzQVbQOO1MYIA4J4rnFINaSLcsgigdLMIDuMsA2ijOBgVj2YwaxlrAWK8rj9OtYDBCG7UkUprAljTuTF5w0/WY1oGNNCD71FcyDCHRqQrA1gUIFpFtQ1IKRy5l//nez18hdqy2MjqXJ06bSV7yBAdZg032hCDXXwKleNr5zzje+E+Yb3gLBZ+BM0v0Vi9GyKouOFSy6CKRixgDtmlXYdKFIAepH1Wve+igMPiKWo+cskidj4bueiyKeebCB7b7Cgq0no1m7Du2Fq8A6Y4pQ392bB0OeFxzl2zBneJuET3/KevXpS0LkTAa5nF5tGNqLAlORcRQpQH1/7yU05fug6f4cjFZGYVZ/eokhAS8PQU45XF++r3gd1zk7vZowQ74fGYuBEhhgHkgXGvNnwfiZD2b0pzxCxgTe+lNhto6jTaWLOT3aEEeezoySLAjmoshDMS3WxmgMlMAl8GEA7ADSkO8F8rQkhLeeQ3Ey9idRrq1gBd/vNTxmQ9BbHE4CP+M7NcGkJdsYQZECGGBODEDGJoRMIiGm6zkBgVRs3+xAm2YFOguD0C0FEcMUhVnSIdEqq3VHDJSgmvJRLEOaR3lqOZWnjhMQ8NT9JYMDV/Ub3GBB3OWkG6ukI05pWlqFh2OgBPUc116ONE8sT+2JcQqlIrXJo6sKQ2hJiNVm6esZKzyEIgUwwAyKr5DmidWiDhj7vorAJEqzMVFzonhohewxUIJqxI0XpyF/OhGgWx1SteNam9RLwHzNElFW3DUnWQ+t0K/nEGctcY1y6ZpqyJuGOIa7HjEA2cm4yYQOTRDacJ2bv/RD/6NNIhKRieXjopPeTzu01mwoVgADeFDuQfkU1N1x4w8IyjVBnsg7sAOkC62FAfgZQ9jLopz72TEQXBlwVx/zqSFWB89BCcqQNwX6vEmUu6A+zw0dhSs82d1JFKwIpgI/7aS5HFf1MedEGYFI49fO6sRnAo605E8PYJWQrqn6uxNQi/Jnd8bhpy/+QGEA2x4QRwnepFlMPBUJgTLeia9iNsaRseo34r4IoiQ4kILsM4rIq3Id8EL1WhQns5zxcLHTXO541TE/jq9iKmPSOFJ5CINle86V/nNQgmq67xN++Px3aC1YTqJFvZz1cCFFQoxhiLGqI5Sm46g8AuuTvTRhKpRJFczF932hpWAJ4rSqA4qHS7wcdFQ1Sh8JCKQy/PQQBh5HIWA5V0S6FSUGMan9xl/U/sQv2f+pUfqQHkFhKkMYoJ8EYFCkgHSbm9VwxYHJgWsux15xAJbHu7Dcdy5xlhHpFjevEfqQIW2PY6/YB+bbXVgynynBS9M/TqGYGXp6AHbEVr4PfSRAL4oy8oFd7BTSTs4bl718/xVpv7VsD8z4v4O/5yyFD6zfHLvWPrt22coPWDEAdsDfjdJLFvxdtyyOF0OzOfbKo4UZ43v+z64zZ/ZWU9R/5o+npwCuo3YAAAAASUVORK5CYII=";
             //Console.WriteLine(base64String);
             delay = 200;
             string[] SelectableKeys = { "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh" , "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruhhhhhh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh", "Bruh" };
-            string[] SelectableControlKeys = {"L-CTRL", "L-ALT", "L-SHIFT", "L-WIN", "R-CTRL", "R-ALT", "R-SHIFT", "R-WIN" };
+            string[] SelectableControlKeys = {"CTRL", "ALT", "SHIFT", "WIN"};
             InitializeComponent();
             addPageInstance = this;
             WindowDropDown.ItemsSource = processNameList;
@@ -106,19 +116,6 @@ namespace KeyRemap
                 Key6Text.Text = MainPage.mainPageInstance.hotkeyList[MainPage.mainPageInstance.selectedRowIndex][5];
             }
         }
-        public void rowBody_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            Rectangle rowBody = Util.FindVisualParent<Rectangle>(sender as Rectangle);
-            MainPage.mainPageInstance.selectedRowIndex = (int)rowBody.GetValue(Grid.RowProperty);
-
-            for (int i = 0; i < MainPage.mainPageInstance.rows; i++)
-            {
-                var pain = Util.ChildrenInRow(MainPage.mainPageInstance.BodyContainer, i);
-                Rectangle painer = (Rectangle)pain.ToList()[4];
-                painer.StrokeThickness = 0;
-            }
-            rowBody.StrokeThickness = 1;
-        }
         public void ApplyButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //Builds the Key remap text used for Homepage
@@ -134,7 +131,7 @@ namespace KeyRemap
                         keyMap1 += remap[i];
                         if (i != 2)
                         {
-                            keyMap1 += "+";
+                            keyMap1 += " + ";
                         }
                     }
                 }
@@ -145,7 +142,7 @@ namespace KeyRemap
                         keyMap2 += remap[i];
                         if (i != 5)
                         {
-                            keyMap2 += "+";
+                            keyMap2 += " + ";
                         }
                     }
                 }
@@ -181,20 +178,21 @@ namespace KeyRemap
                     }
                     catch
                     {
-                        k.key1 = Key1Text.Text;
-                        k.key2 = Key2Text.Text;
-                        k.key3 = Key3Text.Text;
-                        k.key4 = Key4Text.Text;
-                        k.key5 = Key5Text.Text;
-                        k.key6 = Key6Text.Text;
-                        k.keyMap1 = keyMap1;
-                        k.keyMap2 = keyMap2;
-                        k.window = WindowName.Text;
-                        Console.WriteLine("CHANGED WINDOW: {0}", k.window);
-                        k.Register();
+                        Console.WriteLine("Bruh");
                     }
-                        //MainPage.mainPageInstance.keyboardHookManager.UnregisterHotkey(MainPage.mainPageInstance.hotkeyIDList[MainPage.mainPageInstance.selectedRowIndex]);
-                        var pain = Util.ChildrenInRow(MainPage.mainPageInstance.BodyContainer, MainPage.mainPageInstance.selectedRowIndex);
+                    k.key1 = Key1Text.Text;
+                    k.key2 = Key2Text.Text;
+                    k.key3 = Key3Text.Text;
+                    k.key4 = Key4Text.Text;
+                    k.key5 = Key5Text.Text;
+                    k.key6 = Key6Text.Text;
+                    k.keyMap1 = keyMap1;
+                    k.keyMap2 = keyMap2;
+                    k.window = WindowName.Text;
+                    Console.WriteLine("CHANGED WINDOW: {0}", k.window);
+                    k.Register();
+                    //MainPage.mainPageInstance.keyboardHookManager.UnregisterHotkey(MainPage.mainPageInstance.hotkeyIDList[MainPage.mainPageInstance.selectedRowIndex]);
+                    var pain = Util.ChildrenInRow(MainPage.mainPageInstance.BodyContainer, MainPage.mainPageInstance.selectedRowIndex);
                     Rectangle icon = (Rectangle)pain.ToList()[1];
                     Label label1 = (Label)pain.ToList()[2];
                     Label label2 = (Label)pain.ToList()[3];
@@ -236,7 +234,7 @@ namespace KeyRemap
                 Console.WriteLine("{0} HOTKEY ID", hotkeyID);
                 MainPage.mainPageInstance.editPageOpen = false;
                 var keyMapJson = JsonConvert.SerializeObject(MainPage.mainPageInstance.keyMapList,Formatting.Indented);
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var path = Environment.CurrentDirectory;
                 string filePath = System.IO.Path.Combine(path, "SaveFile.json");
                 using(StreamWriter sw = new StreamWriter(filePath))
                 {
@@ -248,7 +246,14 @@ namespace KeyRemap
 
         private void Key1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Key1DropDown.Visibility = Visibility.Visible;
+            if(Key1DropDown.Visibility == Visibility.Visible)
+            {
+                Key1DropDown.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                Key1DropDown.Visibility = Visibility.Visible;
+            }
             for (int i = 0; i < KeyFocused.Length; i++)
                 KeyFocused[i] = false;
             KeyFocused[0] = true;
@@ -256,7 +261,14 @@ namespace KeyRemap
         }
         private void Key2_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Key2DropDown.Visibility = Visibility.Visible;
+            if (Key2DropDown.Visibility == Visibility.Visible)
+            {
+                Key2DropDown.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                Key2DropDown.Visibility = Visibility.Visible;
+            }
             for (int i = 0; i < KeyFocused.Length; i++)
                 KeyFocused[i] = false;
             KeyFocused[1] = true;
@@ -264,8 +276,16 @@ namespace KeyRemap
         }
         private void Key3_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (Key3DropDown.Visibility == Visibility.Visible)
+            {
+                Key3DropDown.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                Key3DropDown.Visibility = Visibility.Visible;
+            }
+            bind.BinderKey = true;
             Console.WriteLine(MainPage.mainPageInstance.pressedKey);
-            Key3DropDown.Visibility = Visibility.Visible;
             for (int i = 0; i < KeyFocused.Length; i++)
                 KeyFocused[i] = false;
             KeyFocused[2] = true;
@@ -273,7 +293,14 @@ namespace KeyRemap
         }
         private void Key4_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Key4DropDown.Visibility = Visibility.Visible;
+            if (Key4DropDown.Visibility == Visibility.Visible)
+            {
+                Key4DropDown.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                Key4DropDown.Visibility = Visibility.Visible;
+            }
             for (int i = 0; i < KeyFocused.Length; i++)
                 KeyFocused[i] = false;
             KeyFocused[3] = true;
@@ -282,6 +309,14 @@ namespace KeyRemap
 
         private void Key5_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (Key5DropDown.Visibility == Visibility.Visible)
+            {
+                Key5DropDown.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                Key5DropDown.Visibility = Visibility.Visible;
+            }
             Key5DropDown.Visibility = Visibility.Visible;
             for (int i = 0; i < KeyFocused.Length; i++)
                 KeyFocused[i] = false;
@@ -291,7 +326,14 @@ namespace KeyRemap
 
         private void Key6_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Key6DropDown.Visibility = Visibility.Visible;
+            if (Key6DropDown.Visibility == Visibility.Visible)
+            {
+                Key6DropDown.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                Key6DropDown.Visibility = Visibility.Visible;
+            }
             for (int i = 0; i < KeyFocused.Length; i++)
                 KeyFocused[i] = false;
             KeyFocused[5] = true;
@@ -336,9 +378,7 @@ namespace KeyRemap
             {
                 if (e.SystemKey.ToString() == "None")
                 {
-                    if ( KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "L-CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "R-CTRL" ||
-                        KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "L-SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "R-SHIFT" ||
-                        KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "L-WIN" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "R-WIN")
+                    if ( KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN")
                     {
                         Key1Text.Text = KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)];
                     }
@@ -355,7 +395,10 @@ namespace KeyRemap
             {
                 if (e.SystemKey.ToString() == "None")
                 {
-                    Key2Text.Text = KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)];
+                    if (KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN")
+                    {
+                        Key2Text.Text = KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)];
+                    }
                 }
                 else
                 {
@@ -383,7 +426,10 @@ namespace KeyRemap
             {
                 if (e.SystemKey.ToString() == "None")
                 {
-                    Key4Text.Text = KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)];
+                    if (KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN")
+                    {
+                        Key4Text.Text = KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)];
+                    }
                 }
                 else
                 {
@@ -397,7 +443,10 @@ namespace KeyRemap
             {
                 if (e.SystemKey.ToString() == "None")
                 {
-                    Key5Text.Text = KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)];
+                    if (KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN")
+                    {
+                        Key5Text.Text = KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)];
+                    }
                 }
                 else
                 {
@@ -442,10 +491,15 @@ namespace KeyRemap
             WindowDropDown.Visibility = Visibility.Hidden;
         }
 
+        private void Handle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MainWindow.mainWindowInstance.DragMove();
+        }
+
         private void AddWindow_Loaded(object sender, RoutedEventArgs e)
         {
             AddWindow.Focus();
         }
-
+        
     }
 }

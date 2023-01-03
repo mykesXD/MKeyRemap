@@ -12,8 +12,11 @@
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Title="MainWindow" Height="520" Width="660" Background="#FF16191E" Loaded="KeyRemapWindow_Loaded">
-    <Canvas Name="Container">
+        AllowsTransparency="True"
+        Background="Transparent"
+        Title="MainWindow" Height="540" Width="660" Loaded="KeyRemapWindow_Loaded">
+    <Border CornerRadius="14" BorderThickness="1" BorderBrush="#FF292C31" Name="Container" Background="#FF16191E">
+
         <Frame x:Name="frame" NavigationUIVisibility="Hidden"/>
-    </Canvas>
+    </Border>
 </Window>

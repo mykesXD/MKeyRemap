@@ -1,5 +1,4 @@
-﻿using DesktopWPFAppLowLevelKeyboardHook;
-using KeyRemap.ViewModels;
+﻿using KeyRemap.ViewModels;
 using KeyRemap.Views;
 using System;
 using System.Collections.Generic;
@@ -28,21 +27,11 @@ namespace KeyRemap
     /// </summary>
     public partial class MainWindow : Window
     {
-        Brush rowColor;
-        Brush rowStrokeColor;
-        public int rows;
-        Canvas ContainerCanvas { get; set; }
         public static MainWindow mainWindowInstance;
         public MainWindow()
         {
-
             InitializeComponent();
             mainWindowInstance = this;
-            rows = 1;
-            /*foreach (Process theprocess in processlist)
-            {
-                Console.WriteLine("Process: {0} ID: {1}", theprocess.ProcessName, theprocess.Id);
-            }*/
         }
         private void KeyRemapWindow_Loaded(object sender, RoutedEventArgs e)
         {

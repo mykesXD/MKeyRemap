@@ -1,4 +1,5 @@
-﻿using DesktopWPFAppLowLevelKeyboardHook;
+﻿using ImageProcessor;
+using ImageProcessor.Imaging.Formats;
 using InputSimulatorStandard;
 using KeyboardHookLibrary;
 using KeyboardUtils;
@@ -28,7 +29,6 @@ namespace KeyRemap
     /// </summary>
     public partial class MainPage : Page
     {
-        private LowLevelKeyboardListener _listener;
         Process[] processes;
         //Process[] processlist = Process.GetProcesses().Where(p => (long)p.MainWindowHandle != 0).ToArray();
         public IntPtr currentWindow;
@@ -62,12 +62,16 @@ namespace KeyRemap
         public List<String> activeWindowList;
         public List<Keymap> sortedList;
         public List<RowDefinition> rowList;
+        public bool ActivateButton;
+        public Bind bind;
+        public int prevSelectedRowIndex;
         public MainPage()
         {
             InitializeComponent();
             mainPageInstance = this;
             rows = 0;
             prevWindowName = "";
+            prevSelectedRowIndex = -1;
             addPageOpen = false;
             processHWNDList = new List<IntPtr>();
             processNameList = new List<String>();
@@ -81,7 +85,10 @@ namespace KeyRemap
             activeWindowList = new List<String>();
             sortedList = new List<Keymap>();
             rowList = new List<RowDefinition>();
+            bind = new Bind();
+            DataContext = bind;
             selectedRowIndex = -1;
+            ActivateButton = false;
             CompositionTarget.Rendering += MainEventTimer;
             foreach (KeyValuePair<IntPtr, string> window in Win32.GetOpenWindows())
             {
@@ -90,29 +97,36 @@ namespace KeyRemap
 
                 IntPtr procId;
                 Win32.GetWindowThreadProcessId(handle,out procId);
-                var p = Process.GetProcessById((int)procId).MainModule.FileVersionInfo.FileDescription;
-                if(p == "")
+                try
                 {
-                    processNameList.Add(title);
-                    Console.WriteLine("{0}^",title);
-                }
-                else
-                {
-                    processNameList.Add(p);
-                    try
+                    var p = Process.GetProcessById((int)procId).MainModule.FileVersionInfo.FileDescription;
+                    if (p == "")
                     {
-                        Console.WriteLine(Process.GetProcessById((int)procId).MainModule.FileName);
-                        Console.WriteLine(p);
+                        processNameList.Add(title);
+                        Console.WriteLine("{0}^", title);
                     }
-                    catch
+                    else
                     {
-                        Console.WriteLine("{0},FAIL",p);
+                        processNameList.Add(p);
+                        try
+                        {
+                            Console.WriteLine(Process.GetProcessById((int)procId).MainModule.FileName);
+                            Console.WriteLine(p);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("{0},FAIL", p);
+                        }
+                    }
+                    using (System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)procId).MainModule.FileName))
+                    {
+
+                        processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
                     }
                 }
-                using (System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)procId).MainModule.FileName))
+                catch
                 {
-                    
-                    processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
+                    Console.WriteLine("SYSTEM FILE");
                 }
             }
             hotkeyWindowList = new List<String>();
@@ -121,7 +135,7 @@ namespace KeyRemap
             keyboardHookManager.Start();
             try
             {
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var path = Environment.CurrentDirectory;
                 string filePath = System.IO.Path.Combine(path, "SaveFile.json");
                 string content = "";
                 using (StreamReader sr = new StreamReader(filePath))
@@ -150,7 +164,7 @@ namespace KeyRemap
         }
         public void MainEventTimer(object sender, EventArgs e)
         {
-            currentWindowName =  GetTitle(Win32.GetForegroundWindow());
+            currentWindowName = GetTitle(Win32.GetForegroundWindow());
             //Console.WriteLine(BodyContainer.RowDefinitions.Count);
             //Console.WriteLine(editPageOpen);
             // Running same hotkeys that has different activation windows
@@ -179,6 +193,20 @@ namespace KeyRemap
                     }
                 }
                 prevWindowName = currentWindowName;
+            }
+            if (selectedRowIndex != prevSelectedRowIndex)
+            {
+                if (selectedRowIndex != -1)
+                {
+                    ActivateButtons();
+                    Console.WriteLine("ACTIVATE");
+                }
+                else
+                {
+                    DeactivateButtons();
+                    Console.WriteLine("DEACTIVATE");
+                }
+                prevSelectedRowIndex = selectedRowIndex;
             }
         }
         static string GetTitle(IntPtr handle, int length = 128)
@@ -217,6 +245,7 @@ namespace KeyRemap
         {
             addPageOpen = true;
             NavigationService.Navigate(new AddPage());
+            selectedRowIndex -= 1;
         }
 
         public void ImportButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -237,77 +266,167 @@ namespace KeyRemap
             BodyContainer.Children.Add(rowBody);
 
         }
-
-        private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            Console.WriteLine("DELETE CLICKED");
-
-            BodyContainer.RowDefinitions.RemoveRange(0, BodyContainer.RowDefinitions.Count);
-            BodyContainer.Children.RemoveRange(0, BodyContainer.Children.Count);
-            keyboardHookManager.UnregisterAll();
-            keyMapList.RemoveAt(selectedRowIndex);
-            rows = 0;
-            var keyMapJson = JsonConvert.SerializeObject(MainPage.mainPageInstance.keyMapList, Formatting.Indented);
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string filePath = System.IO.Path.Combine(path, "SaveFile.json");
-            using (StreamWriter sw = new StreamWriter(filePath))
-            {
-                sw.Write(keyMapJson);
-            }
-
-            try
-            {
-                path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                filePath = System.IO.Path.Combine(path, "SaveFile.json");
-                string content = "";
-                using (StreamReader sr = new StreamReader(filePath))
-                {
-                    content = sr.ReadToEnd();
-                }
-                keyMapList = JsonConvert.DeserializeObject<IEnumerable<Keymap>>(content).ToList();
-                sortedList = keyMapList.OrderBy(o => o.window).ToList();
-                foreach (Keymap keymap in sortedList)
-                {
-                    Console.WriteLine("DADA {0}", keymap.window);
-                    var brush = new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon)));
-                    Row row = new Row(keymap.keyMap1, keymap.keyMap2, brush);
-                    row.Create();
-                    //keymap.Register();
-                    List<string> remap = new List<String> { keymap.key1, keymap.key2, keymap.key3, keymap.key4, keymap.key5, keymap.key6 };
-                    hotkeyList.Add(remap);
-                    hotkeyWindowList.Add(keymap.window);
-                    hotkeyIconList.Add(new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon))));
-                }
-            }
-            catch
-            {
-                Console.WriteLine("DELETE FAIL");
-            }
-        }
-
         private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            editPageOpen = true;
-            NavigationService.Navigate(new AddPage());
+            if (selectedRowIndex != -1)
+            {
+                editPageOpen = true;
+                NavigationService.Navigate(new AddPage());
+                selectedRowIndex -= 1;
+            }
+        }
+        private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (selectedRowIndex != -1)
+            {
+                Console.WriteLine("DELETE CLICKED");
+                BodyContainer.RowDefinitions.RemoveRange(0, BodyContainer.RowDefinitions.Count);
+                BodyContainer.Children.RemoveRange(0, BodyContainer.Children.Count);
+                keyboardHookManager.UnregisterAll();
+                realHotkeyList.Clear();
+                keyMapList.RemoveAt(selectedRowIndex);
+                rows = 0;
+                var keyMapJson = JsonConvert.SerializeObject(MainPage.mainPageInstance.keyMapList, Formatting.Indented);
+                var path = Environment.CurrentDirectory;
+                string filePath = System.IO.Path.Combine(path, "SaveFile.json");
+                using (StreamWriter sw = new StreamWriter(filePath))
+                {
+                    sw.Write(keyMapJson);
+                }
+                try
+                {
+                    path = Environment.CurrentDirectory;
+                    filePath = System.IO.Path.Combine(path, "SaveFile.json");
+                    string content = "";
+                    using (StreamReader sr = new StreamReader(filePath))
+                    {
+                        content = sr.ReadToEnd();
+                    }
+                    keyMapList = JsonConvert.DeserializeObject<IEnumerable<Keymap>>(content).ToList();
+                    sortedList = keyMapList.OrderBy(o => o.window).ToList();
+                    foreach (Keymap keymap in sortedList)
+                    {
+                        Console.WriteLine("DADA {0}", keymap.window);
+                        var brush = new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon)));
+                        Row row = new Row(keymap.keyMap1, keymap.keyMap2, brush);
+                        row.Create();
+                        //keymap.Register();
+                        List<string> remap = new List<String> { keymap.key1, keymap.key2, keymap.key3, keymap.key4, keymap.key5, keymap.key6 };
+                        hotkeyList.Add(remap);
+                        hotkeyWindowList.Add(keymap.window);
+                        hotkeyIconList.Add(new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon))));
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("DELETE FAIL");
+                }
+                selectedRowIndex -= 1;
+            }
         }
 
         private void BodyBackground_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            //for (int i = 0; i < rows; i++)
-            //{
-            //    var pain = Util.ChildrenInRow(BodyContainer, i);
-            //    Rectangle painer = (Rectangle)pain.ToList()[4];
-            //    painer.StrokeThickness = 0;
-            //}
+            for (int i = 0; i < rows; i++)
+            {
+                var pain = Util.ChildrenInRow(BodyContainer, i);
+                Rectangle painer = (Rectangle)pain.ToList()[0];
+                Rectangle painer2 = (Rectangle)pain.ToList()[2];
+                painer2.StrokeThickness = 1;
+                painer2.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF292C31");
+                painer.Fill = Brushes.Transparent;
+            }
+            selectedRowIndex = -1;
         }
         private void ContainerCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            //for (int i = 0; i < rows; i++)
-            //{
-            //    var pain = Util.ChildrenInRow(BodyContainer, i);
-            //    Rectangle painer = (Rectangle)pain.ToList()[4];
-            //    painer.StrokeThickness = 0;
-            //}
+            for (int i = 0; i < rows; i++)
+            {
+                var pain = Util.ChildrenInRow(BodyContainer, i);
+                Rectangle painer = (Rectangle)pain.ToList()[0];
+                Rectangle painer2 = (Rectangle)pain.ToList()[2];
+                painer2.StrokeThickness = 1;
+                painer2.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF292C31");
+                painer.Fill = Brushes.Transparent;
+            }
+            selectedRowIndex = -1;
+
+        }
+
+        private void EditButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (selectedRowIndex != -1)
+            {
+                EditButton.Cursor = Cursors.Hand;
+                bind.BinderEdit = true;
+            }
+            else
+            {
+                EditButton.Cursor = Cursors.Arrow;
+            }
+        }
+
+        private void EditButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            bind.BinderEdit = false;
+            EditButton.Cursor = Cursors.Arrow;
+        }
+
+        private void DeleteButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (selectedRowIndex != -1)
+            {
+                DeleteButton.Cursor = Cursors.Hand;
+                bind.BinderDelete = true;
+            }
+            else
+            {
+                DeleteButton.Cursor = Cursors.Arrow;
+            }
+        }
+
+        private void DeleteButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DeleteButton.Cursor = Cursors.Arrow;
+            bind.BinderDelete = false;
+
+        }
+        public void ActivateButtons()
+        {
+            EditButton.Opacity = 1;
+            DeleteButton.Opacity = 1;
+        }
+        public void DeactivateButtons()
+        {
+            EditButton.Opacity = 0.2;
+            DeleteButton.Opacity = 0.2;
+        }
+
+        private void Handle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Console.WriteLine("DRAG");
+            MainWindow.mainWindowInstance.DragMove();
+        }
+
+        private void SettingsButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            selectedRowIndex = -1;
+            NavigationService.Navigate(new SettingsPage());
+        }
+
+        private void MainPage_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            for (int i = 0; i < rows; i++)
+            {
+                var pain = Util.ChildrenInRow(BodyContainer, i);
+                Rectangle painer = (Rectangle)pain.ToList()[0];
+                Rectangle painer2 = (Rectangle)pain.ToList()[2];
+                //MainPage.mainPageInstance.selectedRowIndex -= 1;
+                painer2.StrokeThickness = 1;
+                painer2.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF292C31");
+                painer.Fill = Brushes.Transparent;
+            }
+            selectedRowIndex = -1;
         }
     }
 }

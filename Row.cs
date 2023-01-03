@@ -25,6 +25,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ImageProcessor;
 
 namespace KeyRemap
 {
@@ -43,14 +44,55 @@ namespace KeyRemap
         {
             Rectangle rowBody = Util.FindVisualParent<Rectangle>(sender as Rectangle);
             MainPage.mainPageInstance.selectedRowIndex = (int)rowBody.GetValue(Grid.RowProperty);
-
+            bool allRemoved = true;
             for (int i = 0; i < MainPage.mainPageInstance.rows; i++)
             {
                 var pain = Util.ChildrenInRow(MainPage.mainPageInstance.BodyContainer, i);
-                Rectangle painer = (Rectangle)pain.ToList()[4];
-                painer.StrokeThickness = 0;
+                Rectangle painer = (Rectangle)pain.ToList()[0];
+                Rectangle painer2 = (Rectangle)pain.ToList()[2];
+                if (i == MainPage.mainPageInstance.selectedRowIndex && painer2.StrokeThickness == 1)
+                {
+                    painer2.StrokeThickness = 0;
+                    painer2.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#3A90CE");
+                    painer.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#3A90CE");
+                    allRemoved = false;
+                }
+                else
+                {
+                    //MainPage.mainPageInstance.selectedRowIndex -= 1;
+                    painer2.StrokeThickness = 1;
+                    painer2.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF292C31");
+                    painer.Fill = Brushes.Transparent;
+                }
             }
-            rowBody.StrokeThickness = 1;
+            if (allRemoved)
+            {
+                MainPage.mainPageInstance.selectedRowIndex = -1;
+            }
+        }
+        public void rowBody_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Rectangle rowBody = Util.FindVisualParent<Rectangle>(sender as Rectangle);
+            if (rowBody.StrokeThickness == 2)
+            {
+                rowBody.StrokeThickness = 2;
+            }
+            else
+            {
+                rowBody.StrokeThickness = 0.5;
+            }
+        }
+        public void rowBody_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Rectangle rowBody = Util.FindVisualParent<Rectangle>(sender as Rectangle);
+            if (rowBody.StrokeThickness == 2)
+            {
+                rowBody.StrokeThickness = 2;
+            }
+            else
+            {
+                rowBody.StrokeThickness = 0;
+            }
         }
         public void Create()
         {
@@ -72,6 +114,8 @@ namespace KeyRemap
             };
 
             rowBackground.MouseLeftButtonDown += rowBody_MouseLeftButtonDown;
+            rowBackground.MouseEnter += rowBody_MouseEnter;
+            rowBackground.MouseLeave += rowBody_MouseLeave;
 
             Grid.SetRow(rowBackground, MainPage.mainPageInstance.rows);
             Grid.SetColumn(rowBackground, 0);
@@ -79,14 +123,15 @@ namespace KeyRemap
             Rectangle rowBody = new Rectangle
             {
                 Name = string.Format("RemapRow{0}", MainPage.mainPageInstance.rows),
-                Width = 494,
+                Width = 520,
                 Height = 44,
                 Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF292C31"),
                 StrokeThickness = 1,
                 Stroke = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF34373B"),
                 RadiusX = 10,
                 RadiusY = 10,
-                Margin = new Thickness(5, 8, 5, 8),
+                Margin = new Thickness(2, 8, 2, 8),
+                IsHitTestVisible = false,
             };
             Grid.SetRow(rowBody, MainPage.mainPageInstance.rows);
             Grid.SetColumn(rowBody, 1);
@@ -99,6 +144,7 @@ namespace KeyRemap
                 Fill = icon,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
+                IsHitTestVisible = false,
             };
             Grid.SetRow(keyIcon, MainPage.mainPageInstance.rows);
             Grid.SetColumn(keyIcon, 0);
@@ -110,9 +156,37 @@ namespace KeyRemap
                 Foreground = new SolidColorBrush(Colors.White),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
+                IsHitTestVisible = false,
             };
             Grid.SetRow(keyLabel, MainPage.mainPageInstance.rows);
             Grid.SetColumn(keyLabel, 1);
+            Brush arrowImage;
+            byte[] photoBytes = File.ReadAllBytes(@"image/Chevron_Right.png");
+            using (MemoryStream inStream = new MemoryStream(photoBytes))
+            {
+                using (MemoryStream outStream = new MemoryStream())
+                {
+                    // Initialize the ImageFactory using the overload to preserve EXIF metadata.
+                    using (ImageFactory imageFactory = new ImageFactory(preserveExifData: true))
+                    {
+                        // Load, resize, set the format and quality and save an image.
+                        imageFactory.Load(inStream)
+                                    .Save(outStream);
+                    }
+                    arrowImage = new ImageBrush(Util.BitmapToBitmapSource(new System.Drawing.Bitmap(outStream)));
+                }
+            }
+            Rectangle arrow = new Rectangle
+            {
+                Name = string.Format("Arrow{0}", MainPage.mainPageInstance.rows),
+                Width = 28,
+                Height = 30,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Fill = arrowImage,
+            };
+            Grid.SetRow(arrow, MainPage.mainPageInstance.rows);
+            Grid.SetColumn(arrow, 2);
 
             Label keyLabel2 = new Label
             {
@@ -122,6 +196,7 @@ namespace KeyRemap
                 Foreground = new SolidColorBrush(Colors.White),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
+                IsHitTestVisible = false,
             };
             Grid.SetRow(keyLabel2, MainPage.mainPageInstance.rows);
             Grid.SetColumn(keyLabel2, 3);
@@ -130,11 +205,19 @@ namespace KeyRemap
             gridRow.Height = new GridLength(60);
             MainPage.mainPageInstance.BodyContainer.RowDefinitions.Add(gridRow);
             MainPage.mainPageInstance.rowList.Add(gridRow);
-            MainPage.mainPageInstance.BodyContainer.Children.Add(rowBody);
-            MainPage.mainPageInstance.BodyContainer.Children.Add(keyIcon);
-            MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel);
-            MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel2);
             MainPage.mainPageInstance.BodyContainer.Children.Add(rowBackground);
+            MainPage.mainPageInstance.BodyContainer.Children.Add(keyIcon);
+            MainPage.mainPageInstance.BodyContainer.Children.Add(rowBody);
+            MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel);
+            MainPage.mainPageInstance.BodyContainer.Children.Add(arrow);
+            MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel2);
+            if(MainPage.mainPageInstance.rows >= 1)
+            {
+                MainPage.mainPageInstance.ScrollView.Height += 60;
+                MainPage.mainPageInstance.ScrollContainer.Height += 60;
+                //MainPage.mainPageInstance.BodyBackground.Height += 60;
+                MainPage.mainPageInstance.BodyContainer.Height += 60;
+            }
             MainPage.mainPageInstance.rows += 1;
         }
     }
