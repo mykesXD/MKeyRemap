@@ -1,8 +1,5 @@
-﻿using ImageProcessor;
-using ImageProcessor.Imaging.Formats;
-using InputSimulatorStandard;
+﻿using InputSimulatorStandard;
 using KeyboardHookLibrary;
-using KeyboardUtils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,18 +7,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 namespace KeyRemap
 {
     /// <summary>
@@ -65,6 +58,9 @@ namespace KeyRemap
         public bool ActivateButton;
         public Bind bind;
         public int prevSelectedRowIndex;
+        public bool paused;
+        public bool settingsOpen;
+        public int delay;
         public MainPage()
         {
             InitializeComponent();
@@ -89,6 +85,9 @@ namespace KeyRemap
             DataContext = bind;
             selectedRowIndex = -1;
             ActivateButton = false;
+            paused = false;
+            delay = 100;
+            settingsOpen = false;
             CompositionTarget.Rendering += MainEventTimer;
             foreach (KeyValuePair<IntPtr, string> window in Win32.GetOpenWindows())
             {
@@ -142,7 +141,11 @@ namespace KeyRemap
                 {
                     content = sr.ReadToEnd();
                 }
-                keyMapList = JsonConvert.DeserializeObject<IEnumerable<Keymap>>(content).ToList();
+                Save save = JsonConvert.DeserializeObject<Save>(content);
+                keyMapList = save.keymaps;
+                delay = save.delay;
+                //keyMapList = JsonConvert.DeserializeObject<IEnumerable<Save>>(content).ToList();
+
                 foreach (Keymap keymap in keyMapList)
                 {
                     Console.WriteLine("DADA {0}", keymap.window);
@@ -164,19 +167,20 @@ namespace KeyRemap
         }
         public void MainEventTimer(object sender, EventArgs e)
         {
+            //Console.WriteLine(selectedRowIndex);
             currentWindowName = GetTitle(Win32.GetForegroundWindow());
             //Console.WriteLine(BodyContainer.RowDefinitions.Count);
             //Console.WriteLine(editPageOpen);
             // Running same hotkeys that has different activation windows
-            // Works when activation windows are specified but when adding *Everywhere* activation, it overrides the others
-            // Sorted the list to make activations with *Everywhere* to be first so it gets overrided by specified window hotkeys
+            // Works when activation windows are specified but when adding *EVERYWHERE* activation, it overrides the others
+            // Sorted the list to make activations with *EVERYWHERE* to be first so it gets overrided by specified window hotkeys
             if (currentWindowName != prevWindowName)
             {
                 sortedList = keyMapList.OrderBy(o => o.window).ToList();
-                Console.WriteLine(currentWindowName);
+                //Console.WriteLine(currentWindowName);
                 foreach (Keymap keymap in sortedList)
                 {
-                    if (currentWindowName.Contains(keymap.window) || keymap.window.Contains("Everywhere") || currentWindowName.Contains("KeyRemap"))
+                    if (currentWindowName.Contains(keymap.window) || keymap.window.Contains("EVERYWHERE") || currentWindowName.Contains("KeyRemap"))
                     {
                         keymap.Register();
                     }
@@ -232,11 +236,14 @@ namespace KeyRemap
         }
         public void CloseButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            MainWindow.mainWindowInstance.Visibility = Visibility.Hidden;
+            MainWindow.mainWindowInstance.Hide();
+            MainWindow.mainWindowInstance.WindowState = WindowState.Minimized;
         }
         private void MenuWindow_Loaded(object sender, RoutedEventArgs e)
         {
-
+            Console.WriteLine("MAIN MENU");
+            bind.BinderSettingsOpened = false;
+            bind.BinderSettingsOpened = true;
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -245,34 +252,32 @@ namespace KeyRemap
         {
             addPageOpen = true;
             NavigationService.Navigate(new AddPage());
-            selectedRowIndex -= 1;
         }
 
-        public void ImportButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        public void PauseButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            rows += 1;
-            rowColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffaacc");
-            rowStrokeColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffffff");
-            Rectangle rowBody = new Rectangle
+            bind.BinderPause = false;
+            bind.BinderPause = true;
+            if (paused)
             {
-                Width = 100,
-                Height = 50,
-                Fill = rowColor,
-                StrokeThickness = 1,
-                Stroke = rowStrokeColor
-            };
-            Canvas.SetLeft(rowBody, 50.0);
-            Canvas.SetTop(rowBody, 100.0);
-            BodyContainer.Children.Add(rowBody);
-
+                keyboardHookManager.Start();
+                paused = false;
+                PauseButton.Fill = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/image/pause.png")));
+            }
+            else
+            {
+                keyboardHookManager.Stop();
+                paused = true;
+                PauseButton.Fill = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/image/play.png")));
+            }
         }
         private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (selectedRowIndex != -1)
             {
                 editPageOpen = true;
+
                 NavigationService.Navigate(new AddPage());
-                selectedRowIndex -= 1;
             }
         }
         private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -284,6 +289,7 @@ namespace KeyRemap
                 BodyContainer.Children.RemoveRange(0, BodyContainer.Children.Count);
                 keyboardHookManager.UnregisterAll();
                 realHotkeyList.Clear();
+                hotkeyList.Clear();
                 keyMapList.RemoveAt(selectedRowIndex);
                 rows = 0;
                 var keyMapJson = JsonConvert.SerializeObject(MainPage.mainPageInstance.keyMapList, Formatting.Indented);
@@ -321,7 +327,7 @@ namespace KeyRemap
                 {
                     Console.WriteLine("DELETE FAIL");
                 }
-                selectedRowIndex -= 1;
+                selectedRowIndex = -1;
             }
         }
 
@@ -393,8 +399,8 @@ namespace KeyRemap
         }
         public void ActivateButtons()
         {
-            EditButton.Opacity = 1;
-            DeleteButton.Opacity = 1;
+            EditButton.Opacity = 0.9;
+            DeleteButton.Opacity = 0.9;
         }
         public void DeactivateButtons()
         {
@@ -411,6 +417,7 @@ namespace KeyRemap
         private void SettingsButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             selectedRowIndex = -1;
+            settingsOpen = true;
             NavigationService.Navigate(new SettingsPage());
         }
 
@@ -427,6 +434,17 @@ namespace KeyRemap
                 painer.Fill = Brushes.Transparent;
             }
             selectedRowIndex = -1;
+        }
+
+        private void PauseButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            bind.BinderPause = false;
+            bind.BinderPause = true;
+        }
+
+        private void MinimizeButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MainWindow.mainWindowInstance.WindowState = WindowState.Minimized;
         }
     }
 }

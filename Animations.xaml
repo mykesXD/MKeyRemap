@@ -5,6 +5,8 @@
 
     <cor:Double x:Key="BlurRadius">24</cor:Double>
     <cor:Double x:Key="SmallScaleFactor">0.9</cor:Double>
+    <cor:Double x:Key="BigScaleFactor">1.2</cor:Double>
+    <cor:Double x:Key="SmallestScaleFactor">1.0</cor:Double>
     <cor:Double x:Key="LargeScaleFactor">0.95</cor:Double>
     <xf:Offset x:Key="PositiveOffset"
 			   OffsetValue="50" />
@@ -22,7 +24,9 @@
     <xf:AnimationSettings x:Key="FadeOut"
 						  Kind="FadeTo"
 						  Opacity="0" />
-
+    <xf:AnimationSettings x:Key="FadeOuter"
+						  Kind="FadeTo"
+						  Opacity="0" />
     <xf:AnimationSettings x:Key="Unblur"
 						  Kind="BlurFrom"
 						  BlurRadius="{StaticResource BlurRadius}" />
@@ -47,17 +51,23 @@
 
     <!-- Scale from a smaller value -->
     <xf:AnimationSettings x:Key="Grow"
-						  Kind="ScaleXFrom,ScaleYFrom"
+						  Kind="ScaleXTo,ScaleYTo"
                           Duration="120"
-						  ScaleX="{StaticResource SmallScaleFactor}"
-						  ScaleY="{StaticResource SmallScaleFactor}" />
+						  ScaleX="{StaticResource BigScaleFactor}"
+						  ScaleY="{StaticResource BigScaleFactor}" />
 
     <!-- Scale to a smaller value -->
     <xf:AnimationSettings x:Key="Shrink"
+						  Kind="ScaleXFrom,ScaleYFrom"
+                          Duration="120"
+						  ScaleX="{StaticResource SmallestScaleFactor}"
+						  ScaleY="{StaticResource SmallestScaleFactor}" />
+    <xf:AnimationSettings x:Key="Shrinker"
 						  Kind="ScaleXTo,ScaleYTo"
                           Duration="120"
-						  ScaleX="{StaticResource SmallScaleFactor}"
-						  ScaleY="{StaticResource SmallScaleFactor}" />
+						  ScaleX="{StaticResource SmallestScaleFactor}"
+						  ScaleY="{StaticResource SmallestScaleFactor}" 
+                          Opacity="0.2"/>
 
     <xf:AnimationSettings x:Key="ScaleToLeft"
 						  Kind="ScaleXTo"
@@ -118,7 +128,16 @@
     <xf:AnimationSettings x:Key="SlideFromRight"
 						  Kind="TranslateXFrom"
 						  OffsetX="{StaticResource PositiveOffset}" />
-
+    <xf:AnimationSettings x:Key="ButtonColorBlue"
+                      Kind="ColorTo"
+                      Color="#2774CD"
+                      Duration="150"
+                      ColorOn="Fill" />
+    <xf:AnimationSettings x:Key="ButtonColorGrey"
+                      Kind="ColorTo"
+                      Duration="150"
+                      Color="#FF292C31"
+                      ColorOn="Fill" />
     <xf:AnimationSettings x:Key="SlideFromBottom"
 						  Kind="TranslateYFrom"
 						  OffsetY="{StaticResource PositiveOffset}" />
@@ -259,5 +278,37 @@
 						  Kind="FadeFrom,RotateTo"
 						  Opacity="0"
 						  Rotation="360" />
-
+    <xf:CompoundSettings x:Key="Compound">
+        <xf:CompoundSettings.Sequence>
+            <xf:AnimationSettings
+						  Kind="ScaleXTo,ScaleYTo"
+                          Duration="150"
+						  ScaleX="{StaticResource LargeScaleFactor}"
+						  ScaleY="{StaticResource LargeScaleFactor}" />
+            <xf:AnimationSettings
+						  Kind="ScaleXFrom,ScaleYFrom"
+                          Duration="150"
+						  ScaleX="{StaticResource LargeScaleFactor}"
+						  ScaleY="{StaticResource LargeScaleFactor}" />
+        </xf:CompoundSettings.Sequence>
+    </xf:CompoundSettings>
+    <xf:CompoundSettings x:Key="Pause">
+        <xf:CompoundSettings.Sequence>
+            <xf:AnimationSettings
+						  Kind="ScaleXTo,ScaleYTo"
+                          Duration="150"
+						  ScaleX="{StaticResource LargeScaleFactor}"
+						  ScaleY="{StaticResource LargeScaleFactor}" />
+            <xf:AnimationSettings
+						  Kind="ScaleXFrom,ScaleYFrom"
+                          Duration="150"
+						  ScaleX="{StaticResource LargeScaleFactor}"
+						  ScaleY="{StaticResource LargeScaleFactor}" />
+            <xf:AnimationSettings
+						  Kind="ScaleXTo,ScaleYTo"
+                          Duration="150"
+						  ScaleX="{StaticResource LargeScaleFactor}"
+						  ScaleY="{StaticResource LargeScaleFactor}" />
+        </xf:CompoundSettings.Sequence>
+    </xf:CompoundSettings>
 </ResourceDictionary>

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.ComponentModel;
 namespace KeyRemap
 {
     public class Bind : INotifyPropertyChanged
@@ -12,6 +6,45 @@ namespace KeyRemap
         public bool _bindEdit;
         public bool _bindDelete;
         public bool _keyBind;
+        public bool _binderDelay;
+        public bool _binderSettingsOpen;
+        public bool _binderPause;
+        public bool BinderPause
+        {
+            get
+            {
+                return _binderPause;
+            }
+            set
+            {
+                _binderPause = value;
+                OnPropertyChanged(nameof(BinderPause));
+            }
+        }
+        public bool BinderSettingsOpened
+        {
+            get
+            {
+                return _binderSettingsOpen;
+            }
+            set
+            {
+                _binderSettingsOpen = value;
+                OnPropertyChanged(nameof(BinderSettingsOpened));
+            }
+        }
+        public bool BinderDelay
+        {
+            get
+            {
+                return _binderDelay;
+            }
+            set
+            {
+                _binderDelay = value;
+                OnPropertyChanged(nameof(BinderDelay));
+            }
+        }
         public bool BinderEdit {
             get
             {

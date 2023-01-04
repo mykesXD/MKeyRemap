@@ -252,26 +252,17 @@
       <DependentUpon>AddPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Bind.cs" />
-    <Compile Include="GlobalHook.cs" />
     <Compile Include="KeyDictionary.cs" />
     <Compile Include="Keymap.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Row.cs" />
+    <Compile Include="Save.cs" />
     <Compile Include="SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
-    <Compile Include="ViewModels\AddViewModel.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="Views\AddView.xaml.cs">
-      <DependentUpon>AddView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\MainView.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Win32.cs" />
     <Page Include="AddPage.xaml">
       <SubType>Designer</SubType>
@@ -301,14 +292,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AddView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\MainView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -328,6 +311,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="fonts\SourceCodePro-Black.ttf" />
+    <Resource Include="fonts\SourceCodePro-Bold.ttf" />
+    <Resource Include="fonts\SourceCodePro-Medium.ttf" />
+    <Resource Include="fonts\SourceCodePro-Regular.ttf" />
+    <Resource Include="fonts\SourceCodePro-ExtraBold.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -342,7 +330,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="image\Add_Plus_Square.png" />
-    <Resource Include="image\Chevron_Right.png" />
+    <Resource Include="image\arrow.png" />
     <Resource Include="image\close_ring.png" />
     <Resource Include="image\File_Upload.png" />
     <Resource Include="image\Globe.png" />
@@ -378,11 +366,23 @@
     <Resource Include="remapIcon256x256x2.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="image\add.png" />
     <Resource Include="image\edit.png" />
     <Resource Include="image\pause.png" />
     <Resource Include="image\trash.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="image\play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="image\check.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="image\arrow_circle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="image\add.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

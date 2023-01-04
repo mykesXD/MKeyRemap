@@ -1,32 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using InputSimulatorStandard.Native;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ImageProcessor;
-
 namespace KeyRemap
 {
     public class Row
@@ -53,8 +32,8 @@ namespace KeyRemap
                 if (i == MainPage.mainPageInstance.selectedRowIndex && painer2.StrokeThickness == 1)
                 {
                     painer2.StrokeThickness = 0;
-                    painer2.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#3A90CE");
-                    painer.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#3A90CE");
+                    painer2.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#2774CD");
+                    painer.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#2774CD");
                     allRemoved = false;
                 }
                 else
@@ -153,6 +132,7 @@ namespace KeyRemap
                 Name = "keyLabel",
                 Content = keyMap1,
                 FontSize = 20,
+                FontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./fonts/#Source Code Pro Medium"),
                 Foreground = new SolidColorBrush(Colors.White),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -160,22 +140,6 @@ namespace KeyRemap
             };
             Grid.SetRow(keyLabel, MainPage.mainPageInstance.rows);
             Grid.SetColumn(keyLabel, 1);
-            Brush arrowImage;
-            byte[] photoBytes = File.ReadAllBytes(@"image/Chevron_Right.png");
-            using (MemoryStream inStream = new MemoryStream(photoBytes))
-            {
-                using (MemoryStream outStream = new MemoryStream())
-                {
-                    // Initialize the ImageFactory using the overload to preserve EXIF metadata.
-                    using (ImageFactory imageFactory = new ImageFactory(preserveExifData: true))
-                    {
-                        // Load, resize, set the format and quality and save an image.
-                        imageFactory.Load(inStream)
-                                    .Save(outStream);
-                    }
-                    arrowImage = new ImageBrush(Util.BitmapToBitmapSource(new System.Drawing.Bitmap(outStream)));
-                }
-            }
             Rectangle arrow = new Rectangle
             {
                 Name = string.Format("Arrow{0}", MainPage.mainPageInstance.rows),
@@ -183,7 +147,7 @@ namespace KeyRemap
                 Height = 30,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                Fill = arrowImage,
+                Fill = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/image/arrow.png"))),
             };
             Grid.SetRow(arrow, MainPage.mainPageInstance.rows);
             Grid.SetColumn(arrow, 2);
@@ -193,6 +157,7 @@ namespace KeyRemap
                 Name = "keyLabel2",
                 Content = keyMap2,
                 FontSize = 20,
+                FontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./fonts/#Source Code Pro Medium"),
                 Foreground = new SolidColorBrush(Colors.White),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,

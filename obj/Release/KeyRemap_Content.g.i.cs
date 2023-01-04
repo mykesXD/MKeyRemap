@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("remapicon256x256x2.ico")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("fonts/sourcecodepro-medium.ttf")]
 
 

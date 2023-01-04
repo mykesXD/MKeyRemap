@@ -4,8 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KeyRemap"
-        xmlns:viewmodels="clr-namespace:KeyRemap.ViewModels"
-        xmlns:views="clr-namespace:KeyRemap.Views"
         mc:Ignorable="d"
         Name="KeyRemapWindow"
         Visibility="Visible"
@@ -14,9 +12,8 @@
         ResizeMode="NoResize"
         AllowsTransparency="True"
         Background="Transparent"
-        Title="MainWindow" Height="540" Width="660" Loaded="KeyRemapWindow_Loaded">
+        Title="MyKeysRemap" Height="540" Width="660" Loaded="KeyRemapWindow_Loaded">
     <Border CornerRadius="14" BorderThickness="1" BorderBrush="#FF292C31" Name="Container" Background="#FF16191E">
-
         <Frame x:Name="frame" NavigationUIVisibility="Hidden"/>
     </Border>
 </Window>
