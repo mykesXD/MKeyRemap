@@ -1,0 +1,19 @@
+﻿<Application x:Class="KeyRemap.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:KeyRemap"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <FontFamily x:Key="SourceCodePro-Black">pack://application:,,,/fonts/#Source Code Pro Black</FontFamily>
+            <FontFamily x:Key="SourceCodePro">pack://application:,,,/fonts/#Source Code Pro</FontFamily>
+            <FontFamily x:Key="SourceCodePro-Medium">pack://application:,,,/fonts/#Source Code Pro Medium</FontFamily>
+            <FontFamily x:Key="SourceCodePro-Regular">pack://application:,,,/fonts/#Source Code Pro Regular</FontFamily>
+            <FontFamily x:Key="SourceCodePro-Bold">pack://application:,,,/fonts/#Source Code Pro ExtraBold</FontFamily>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Animations.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    
+</Application>
