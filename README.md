@@ -9,7 +9,7 @@
 ## About The Project
 
 <div align="middle">
-    <img src="https://user-images.githubusercontent.com/50587061/210876905-5bfe5ea1-75ac-4dd3-9525-b953549caf2c.png" alt="Logo" width="400" height="auto" hspace="50">
+    <img src="https://user-images.githubusercontent.com/50587061/210876905-5bfe5ea1-75ac-4dd3-9525-b953549caf2c.png" alt="Logo" width="400" height="auto">
     <img src="https://user-images.githubusercontent.com/50587061/210877120-31886873-4c4e-40d8-8bc8-11fb92c12b64.png"  alt="Logo" width="400" height="auto">
 </div>
 
