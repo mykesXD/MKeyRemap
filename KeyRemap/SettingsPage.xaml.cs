@@ -38,6 +38,7 @@ namespace KeyRemap
                 IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
                 shortcut.Description = "Shortcut for MKeyRemap";
                 shortcut.IconLocation = Environment.CurrentDirectory + @"\MKeyRemap.exe, 0";
+                shortcut.Arguments = "-startup";
                 shortcut.TargetPath = Environment.CurrentDirectory + @"\MKeyRemap.exe";
                 shortcut.WorkingDirectory = Environment.CurrentDirectory;
                 shortcut.Save();

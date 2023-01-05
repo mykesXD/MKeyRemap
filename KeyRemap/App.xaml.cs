@@ -31,6 +31,7 @@ namespace KeyRemap
         }
         private void Open(object sender, EventArgs e)
         {
+            MainWindow.ShowInTaskbar = true;
             MainWindow.Show();
             MainWindow.WindowState = WindowState.Normal;
             MainWindow.Activate();

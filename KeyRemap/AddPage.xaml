@@ -199,7 +199,7 @@
         <Rectangle xf:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=Key1}"
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Expand}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Contract}, Event=None}"
-                    x:Name="Key1" RadiusX="10" RadiusY="10" Height="70" Width="70" Fill="#FF292C31" Canvas.Left="15" Canvas.Top="89" Stroke="#FF34373B" MouseLeftButtonDown="Key1_MouseLeftButtonDown" Cursor="Hand"/>
+                    x:Name="Key1" RadiusX="10" RadiusY="10" Height="70" Width="74" Fill="#FF292C31" Canvas.Left="13" Canvas.Top="89" Stroke="#FF34373B" MouseLeftButtonDown="Key1_MouseLeftButtonDown" Cursor="Hand"/>
         <Viewbox xf:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=Key1}"
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Expand}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Contract}, Event=None}"
@@ -228,11 +228,11 @@
         <Rectangle xf:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=Key2}"
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Expand}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Contract}, Event=None}"
-                    x:Name="Key2" RadiusX="10" RadiusY="10" Height="70" Width="70" Fill="#FF292C31" Canvas.Left="100" Canvas.Top="89" MouseLeftButtonDown="Key2_MouseLeftButtonDown" Stroke="#FF34373B" Cursor="Hand"/>
+                    x:Name="Key2" RadiusX="10" RadiusY="10" Height="70" Width="74" Fill="#FF292C31" Canvas.Left="98" Canvas.Top="89" MouseLeftButtonDown="Key2_MouseLeftButtonDown" Stroke="#FF34373B" Cursor="Hand"/>
         <Viewbox xf:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=Key2}"
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Expand}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Contract}, Event=None}"
-                    Height="30" Canvas.Left="100" Canvas.Top="107" Width="71">
+                    Height="30" Canvas.Left="100" Canvas.Top="107" Width="70">
             <TextBlock FontFamily="{StaticResource SourceCodePro-Bold}" x:Name="Key2Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="49" Canvas.Top="114"/>
         </Viewbox>
         <ListBox FontFamily="{StaticResource SourceCodePro-Regular}" FontSize="14" x:Name="Key2DropDown" Visibility="Hidden" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="94" Canvas.Left="100" Canvas.Top="149" Width="70" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key2DropDown_SelectionChanged">
@@ -253,7 +253,7 @@
         <Viewbox xf:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=Key3}"
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Expand}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Contract}, Event=None}"
-                    Height="30" Canvas.Left="192" Canvas.Top="107" Width="92">
+                    Height="30" Canvas.Left="189" Canvas.Top="107" Width="92">
             <TextBlock FontFamily="{StaticResource SourceCodePro-Bold}" x:Name="Key3Text" IsHitTestVisible="False" TextWrapping="Wrap"  TextAlignment="Center" Text=" " HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="20" Foreground="White" Canvas.Left="241" Canvas.Top="110"/>
         </Viewbox>
         <ListBox FontFamily="{StaticResource SourceCodePro-Regular}" FontSize="14" Name="Key3DropDown" Visibility="Hidden" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="229" Canvas.Left="185" Canvas.Top="149" Width="100" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key3DropDown_SelectionChanged">
@@ -270,11 +270,11 @@
         <Rectangle xf:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=Key4}"
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Expand}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Contract}, Event=None}"
-                    x:Name="Key4" RadiusX="10" RadiusY="10" Height="70" Width="70" Fill="#FF292C31" Canvas.Left="372" Canvas.Top="89" MouseLeftButtonDown="Key4_MouseLeftButtonDown" Stroke="#FF34373B" Cursor="Hand"/>
+                    x:Name="Key4" RadiusX="10" RadiusY="10" Height="70" Width="74" Fill="#FF292C31" Canvas.Left="372" Canvas.Top="89" MouseLeftButtonDown="Key4_MouseLeftButtonDown" Stroke="#FF34373B" Cursor="Hand"/>
         <Viewbox xf:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=Key4}"
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Expand}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Contract}, Event=None}"
-                    Height="30" Canvas.Left="372" Canvas.Top="107" Width="70">
+                    Height="30" Canvas.Left="374" Canvas.Top="107" Width="70">
             <TextBlock FontFamily="{StaticResource SourceCodePro-Bold}" x:Name="Key4Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="49" Canvas.Top="114"/>
         </Viewbox>
         <ListBox FontFamily="{StaticResource SourceCodePro-Regular}" x:Name="Key4DropDown" Visibility="Hidden" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="94" Canvas.Left="372" Canvas.Top="149" Width="70" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key4DropDown_SelectionChanged">
@@ -291,11 +291,11 @@
         <Rectangle xf:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=Key5}"
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Expand}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Contract}, Event=None}"
-                    x:Name="Key5" RadiusX="10" RadiusY="10" Height="70" Width="70" Fill="#FF292C31" Canvas.Left="458" Canvas.Top="89" MouseLeftButtonDown="Key5_MouseLeftButtonDown" Stroke="#FF34373B" Cursor="Hand"/>
+                    x:Name="Key5" RadiusX="10" RadiusY="10" Height="70" Width="74" Fill="#FF292C31" Canvas.Left="458" Canvas.Top="89" MouseLeftButtonDown="Key5_MouseLeftButtonDown" Stroke="#FF34373B" Cursor="Hand"/>
         <Viewbox xf:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=Key5}"
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Expand}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Contract}, Event=None}"
-                    Height="30" Canvas.Left="458" Canvas.Top="107" Width="70">
+                    Height="30" Canvas.Left="460" Canvas.Top="107" Width="70">
             <TextBlock FontFamily="{StaticResource SourceCodePro-Bold}" x:Name="Key5Text" IsHitTestVisible="False" TextWrapping="Wrap" Text=" "  FontSize="18" Foreground="White" Canvas.Left="49" Canvas.Top="114"/>
         </Viewbox>
         <ListBox FontFamily="{StaticResource SourceCodePro-Regular}" FontSize="14" x:Name="Key5DropDown" Visibility="Hidden" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="94" Canvas.Left="458" Canvas.Top="149" Width="70" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="Key5DropDown_SelectionChanged">

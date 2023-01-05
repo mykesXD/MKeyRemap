@@ -172,8 +172,8 @@
         </Rectangle>
         <Rectangle Name="BodyBackground" RadiusX="10" RadiusY="10" Height="409" VerticalAlignment="Top" Fill="#FF1E2126" Stroke="#FF292C31" Canvas.Left="20" Canvas.Top="113" Grid.ColumnSpan="3" Grid.RowSpan="3" Width="619" MouseLeftButtonDown="BodyBackground_MouseLeftButtonDown"/>
         <Canvas Name="Handle" Height="39" Width="660" MouseLeftButtonDown="Handle_MouseLeftButtonDown" Background="Black" Opacity="0"/>
-        <ScrollViewer Name="ScrollView" Height="103" Canvas.Left="23" Canvas.Top="121" Width="629">
-            <Canvas Name ="ScrollContainer" Height="93">
+        <ScrollViewer Focusable="False" Name="ScrollView" Height="388" Canvas.Left="23" Canvas.Top="121" Width="629">
+            <Canvas Name ="ScrollContainer" Height="373" >
                 <Grid Name="BodyContainer" Height="87" Width="602" Canvas.Left="7" Canvas.Top="6">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60"/>

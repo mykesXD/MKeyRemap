@@ -176,13 +176,11 @@ namespace KeyRemap
             MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel);
             MainPage.mainPageInstance.BodyContainer.Children.Add(arrow);
             MainPage.mainPageInstance.BodyContainer.Children.Add(keyLabel2);
-            if(MainPage.mainPageInstance.rows >= 1)
+            if(MainPage.mainPageInstance.rows >= 6)
             {
-                MainPage.mainPageInstance.ScrollView.Height += 60;
                 MainPage.mainPageInstance.ScrollContainer.Height += 60;
-                //MainPage.mainPageInstance.BodyBackground.Height += 60;
-                MainPage.mainPageInstance.BodyContainer.Height += 60;
             }
+            MainPage.mainPageInstance.BodyContainer.Height += 60;
             MainPage.mainPageInstance.rows += 1;
         }
     }

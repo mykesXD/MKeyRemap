@@ -84,7 +84,7 @@
             </Style.Triggers>
         </Style>
     </Page.Resources>
-    <Grid Name="SettingsContainer" 
+    <Grid Name="SettingsContainer" Focusable="False" 
           XamlFlair:Animations.PrimaryBinding="{Binding BinderSettingsOpened, UpdateSourceTrigger=PropertyChanged}"
           XamlFlair:Animations.Primary="{XamlFlair:Animate BasedOn={StaticResource FadeIn}, Duration=500, Event=None}">
         <TextBlock FontFamily="{StaticResource SourceCodePro-Bold}" FontStyle="Normal" TextAlignment="Center" TextTrimming="CharacterEllipsis" x:Name="RunLabel" TextWrapping="Wrap" Text="RUN ON START-UP"  FontSize="18" Foreground="White" FontWeight="Bold" Margin="94,99,454,383"/>

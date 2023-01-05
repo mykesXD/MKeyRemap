@@ -57,18 +57,21 @@ namespace KeyRemap
                 try
                 {
                     var p = Process.GetProcessById((int)procId).MainModule.FileVersionInfo.FileDescription;
-                    if (p == "")
+                    if (p == null && !processNameList.Contains(title))
                     {
                         processNameList.Add(title);
                     }
                     else
                     {
-                        processNameList.Add(p);
+                        if (!processNameList.Contains(p))
+                        {
+                            processNameList.Add(p);
+                        }
                     }
                     using (System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)procId).MainModule.FileName))
                     {
-                        processIcon.Add(ico.ToBitmap());
                         processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
+                        processIcon.Add(Util.BitmapFromSource(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
                     }
                 }
                 catch

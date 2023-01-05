@@ -94,21 +94,15 @@ namespace KeyRemap
                 try
                 {
                     var p = Process.GetProcessById((int)procId).MainModule.FileVersionInfo.FileDescription;
-                    if (p == "")
+                    if (p == null && !processNameList.Contains(title))
                     {
                         processNameList.Add(title);
                     }
                     else
                     {
-                        processNameList.Add(p);
-                        try
+                        if (!processNameList.Contains(p))
                         {
-                            Console.WriteLine(Process.GetProcessById((int)procId).MainModule.FileName);
-                            Console.WriteLine(p);
-                        }
-                        catch
-                        {
-                            Console.WriteLine("{0},FAIL", p);
+                            processNameList.Add(p);
                         }
                     }
                     using (System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)procId).MainModule.FileName))
@@ -230,6 +224,7 @@ namespace KeyRemap
 
         public void CloseButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            MainWindow.mainWindowInstance.ShowInTaskbar = false;
             MainWindow.mainWindowInstance.Hide();
             MainWindow.mainWindowInstance.WindowState = WindowState.Minimized;
         }
