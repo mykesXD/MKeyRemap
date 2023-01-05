@@ -1,9 +1,8 @@
 
 <div align="center">
   <a href="https://user-images.githubusercontent.com/50587061/210876554-4d8758f1-b15b-4666-9921-099cd812b649.png">
-    <img src="https://user-images.githubusercontent.com/50587061/210876554-4d8758f1-b15b-4666-9921-099cd812b649.png" alt="Logo" width="80" height="80">
+    <img src="https://user-images.githubusercontent.com/50587061/210876554-4d8758f1-b15b-4666-9921-099cd812b649.png" alt="Logo" width="100" height="100">
   </a>
-  <h3 align="center">MKeyRemap</h3>
 </div>
 
 ## About The Project
