@@ -15,23 +15,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 namespace KeyRemap
 {
-    /// <summary>
-    /// Interaction logic for MainPage.xaml
-    /// </summary>
     public partial class MainPage : Page
     {
-        Process[] processes;
-        //Process[] processlist = Process.GetProcesses().Where(p => (long)p.MainWindowHandle != 0).ToArray();
         public IntPtr currentWindow;
         public string currentWindowName;
         public string prevWindowName;
         public int rows;
         public int windowKeymap;
         public int selectedRowIndex;
-        Brush rowColor;
-        Brush rowStrokeColor;
         public static MainPage mainPageInstance;
         public static AddPage addPageInstance;
         public bool ValidKey;
@@ -61,6 +55,7 @@ namespace KeyRemap
         public bool paused;
         public bool settingsOpen;
         public int delay;
+
         public MainPage()
         {
             InitializeComponent();
@@ -95,14 +90,13 @@ namespace KeyRemap
                 string title = window.Value;
 
                 IntPtr procId;
-                Win32.GetWindowThreadProcessId(handle,out procId);
+                Win32.GetWindowThreadProcessId(handle, out procId);
                 try
                 {
                     var p = Process.GetProcessById((int)procId).MainModule.FileVersionInfo.FileDescription;
                     if (p == "")
                     {
                         processNameList.Add(title);
-                        Console.WriteLine("{0}^", title);
                     }
                     else
                     {
@@ -119,7 +113,6 @@ namespace KeyRemap
                     }
                     using (System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)procId).MainModule.FileName))
                     {
-
                         processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
                     }
                 }
@@ -132,39 +125,40 @@ namespace KeyRemap
             keySimulator = new InputSimulator();
             keyboardHookManager = new KeyboardHookManager();
             keyboardHookManager.Start();
+            var path = Environment.CurrentDirectory;
+            string filePath = System.IO.Path.Combine(path, "SaveFile.json");
+            string content = "";
             try
             {
-                var path = Environment.CurrentDirectory;
-                string filePath = System.IO.Path.Combine(path, "SaveFile.json");
-                string content = "";
                 using (StreamReader sr = new StreamReader(filePath))
                 {
                     content = sr.ReadToEnd();
                 }
                 Save save = JsonConvert.DeserializeObject<Save>(content);
-                keyMapList = save.keymaps;
-                delay = save.delay;
-                //keyMapList = JsonConvert.DeserializeObject<IEnumerable<Save>>(content).ToList();
-
-                foreach (Keymap keymap in keyMapList)
+                if (save != null)
                 {
-                    Console.WriteLine("DADA {0}", keymap.window);
-                    var brush = new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon)));
-                    Row row = new Row(keymap.keyMap1, keymap.keyMap2, brush);
-                    row.Create();
-                    //keymap.Register();
-                    List<string> remap = new List<String> { keymap.key1, keymap.key2, keymap.key3, keymap.key4, keymap.key5, keymap.key6 };
-                    hotkeyList.Add(remap);
-                    hotkeyWindowList.Add(keymap.window);
-                    hotkeyIconList.Add(new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon))));
+                    keyMapList = save.keymaps;
+                    delay = save.delay;
+                    //keyMapList = JsonConvert.DeserializeObject<IEnumerable<Save>>(content).ToList();
+
+                    foreach (Keymap keymap in keyMapList)
+                    {
+                        var brush = new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon)));
+                        Row row = new Row(keymap.keyMap1, keymap.keyMap2, brush);
+                        row.Create();
+                        List<string> remap = new List<String> { keymap.key1, keymap.key2, keymap.key3, keymap.key4, keymap.key5, keymap.key6 };
+                        hotkeyList.Add(remap);
+                        hotkeyWindowList.Add(keymap.window);
+                        hotkeyIconList.Add(new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon))));
+                    }
                 }
             }
             catch(Exception e)
             {
-                Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                 Console.WriteLine(e);
             }
         }
+
         public void MainEventTimer(object sender, EventArgs e)
         {
             //Console.WriteLine(selectedRowIndex);
@@ -192,7 +186,7 @@ namespace KeyRemap
                         }
                         catch
                         {
-                            Console.WriteLine("EXCEPTION");
+                            //Console.WriteLine("EXCEPTION");
                         }
                     }
                 }
@@ -203,17 +197,16 @@ namespace KeyRemap
                 if (selectedRowIndex != -1)
                 {
                     ActivateButtons();
-                    Console.WriteLine("ACTIVATE");
                 }
                 else
                 {
                     DeactivateButtons();
-                    Console.WriteLine("DEACTIVATE");
                 }
                 prevSelectedRowIndex = selectedRowIndex;
             }
         }
-        static string GetTitle(IntPtr handle, int length = 128)
+
+        private static string GetTitle(IntPtr handle, int length = 128)
         {
             StringBuilder builder = new StringBuilder(length);
             Win32.GetWindowText(handle, builder, length + 1);
@@ -234,20 +227,23 @@ namespace KeyRemap
             }
             return p;
         }
+
         public void CloseButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             MainWindow.mainWindowInstance.Hide();
             MainWindow.mainWindowInstance.WindowState = WindowState.Minimized;
         }
+
         private void MenuWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("MAIN MENU");
             bind.BinderSettingsOpened = false;
             bind.BinderSettingsOpened = true;
         }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
         }
+
         private void AddButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             addPageOpen = true;
@@ -271,6 +267,7 @@ namespace KeyRemap
                 PauseButton.Fill = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/image/play.png")));
             }
         }
+
         private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (selectedRowIndex != -1)
@@ -280,11 +277,11 @@ namespace KeyRemap
                 NavigationService.Navigate(new AddPage());
             }
         }
+
         private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (selectedRowIndex != -1)
             {
-                Console.WriteLine("DELETE CLICKED");
                 BodyContainer.RowDefinitions.RemoveRange(0, BodyContainer.RowDefinitions.Count);
                 BodyContainer.Children.RemoveRange(0, BodyContainer.Children.Count);
                 keyboardHookManager.UnregisterAll();
@@ -312,7 +309,6 @@ namespace KeyRemap
                     sortedList = keyMapList.OrderBy(o => o.window).ToList();
                     foreach (Keymap keymap in sortedList)
                     {
-                        Console.WriteLine("DADA {0}", keymap.window);
                         var brush = new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon)));
                         Row row = new Row(keymap.keyMap1, keymap.keyMap2, brush);
                         row.Create();
@@ -344,6 +340,7 @@ namespace KeyRemap
             }
             selectedRowIndex = -1;
         }
+
         private void ContainerCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             for (int i = 0; i < rows; i++)
@@ -356,7 +353,6 @@ namespace KeyRemap
                 painer.Fill = Brushes.Transparent;
             }
             selectedRowIndex = -1;
-
         }
 
         private void EditButton_MouseEnter(object sender, MouseEventArgs e)
@@ -395,13 +391,14 @@ namespace KeyRemap
         {
             DeleteButton.Cursor = Cursors.Arrow;
             bind.BinderDelete = false;
-
         }
+
         public void ActivateButtons()
         {
             EditButton.Opacity = 0.9;
             DeleteButton.Opacity = 0.9;
         }
+
         public void DeactivateButtons()
         {
             EditButton.Opacity = 0.2;
@@ -410,7 +407,6 @@ namespace KeyRemap
 
         private void Handle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Console.WriteLine("DRAG");
             MainWindow.mainWindowInstance.DragMove();
         }
 

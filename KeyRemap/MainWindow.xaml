@@ -12,7 +12,7 @@
         ResizeMode="NoResize"
         AllowsTransparency="True"
         Background="Transparent"
-        Title="MyKeysRemap" Height="540" Width="660" Loaded="KeyRemapWindow_Loaded">
+        Title="MKeyRemap" Height="540" Width="660" Loaded="KeyRemapWindow_Loaded">
     <Border CornerRadius="14" BorderThickness="1" BorderBrush="#FF292C31" Name="Container" Background="#FF16191E">
         <Frame x:Name="frame" NavigationUIVisibility="Hidden"/>
     </Border>

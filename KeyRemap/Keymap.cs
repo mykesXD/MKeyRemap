@@ -35,7 +35,7 @@ namespace KeyRemap
         {
             int modkey1;
             int modkey2;
-            Console.WriteLine("KM: REGISTERING: {0}", window);
+            //Console.WriteLine("KM: REGISTERING: {0}", window);
             if (key1.Contains("ALT"))
             {
                 modkey1 = 1;
@@ -80,7 +80,6 @@ namespace KeyRemap
             {
                 id = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey(KeyDictionary.keyReversed[key3], () =>
                 {
-                    Console.WriteLine(KeyDictionary.keyReversed[key3]);
                     if (!MainPage.mainPageInstance.currentWindowName.Contains("KeyRemap"))
                     {
                         if (key4 == " " && key5 == " ")
@@ -122,7 +121,6 @@ namespace KeyRemap
             {
                 id = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey((KeyboardHookLibrary.ModifierKeys)modkey1, KeyDictionary.keyReversed[key3], () =>
                 {
-                    Console.WriteLine("WORKING1");
                     if (key4 == " " && key5 == " ")
                     {
                         Thread.Sleep(MainPage.mainPageInstance.delay);
@@ -157,8 +155,6 @@ namespace KeyRemap
             {
                 id = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey((KeyboardHookLibrary.ModifierKeys)modkey2, KeyDictionary.keyReversed[key3], () =>
                 {
-                    Console.WriteLine("WORKING");
-                    Console.WriteLine(modkey2);
                     if (key4 == " " && key5 == " ")
                     {
                         Thread.Sleep(MainPage.mainPageInstance.delay);
@@ -194,7 +190,6 @@ namespace KeyRemap
             {
                 id = MainPage.mainPageInstance.keyboardHookManager.RegisterHotkey(new[] { (KeyboardHookLibrary.ModifierKeys)modkey1, (KeyboardHookLibrary.ModifierKeys)modkey2 }, KeyDictionary.keyReversed[key3], () =>
                 {
-                    Console.WriteLine("2 detected");
                     if (key4 == " " && key5 == " ")
                     {
                         MainPage.mainPageInstance.keySimulator.Keyboard.KeyPress((VirtualKeyCode)KeyDictionary.keyReversed[key6]);
@@ -224,11 +219,11 @@ namespace KeyRemap
                     }
                 }, true);
             }
-            Console.WriteLine("KM: ID: {0}", id);
+            //Console.WriteLine("KM: ID: {0}", id);
         }
         public void Unregister() 
         {
-            Console.WriteLine("KM: UNREGISTERING: {0},{1}",window ,id);
+            //Console.WriteLine("KM: UNREGISTERING: {0},{1}",window ,id);
             MainPage.mainPageInstance.keyboardHookManager.UnregisterHotkey(id);
         }
 

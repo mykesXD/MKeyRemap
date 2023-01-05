@@ -7,7 +7,7 @@
       xmlns:XamlFlair="clr-namespace:XamlFlair;assembly=XamlFlair.WPF"
       x:Class="KeyRemap.SettingsPage"
       mc:Ignorable="d" 
-      Height="540" Width="660" Background="#FF16191E"
+      Height="540" Width="660" 
       Title="Settings"
       x:Name="SettingsMenu"
       Focusable="True" Loaded="SettingsMenu_Loaded">
@@ -117,5 +117,7 @@
         </Rectangle>
         <TextBlock FontFamily="{StaticResource SourceCodePro}" FontSize="24" Text="{Binding ElementName=DelaySlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Margin="512,242,101,250" Foreground="White" />
         <Slider Value="100" Style="{StaticResource Horizontal_Slider}" Maximum="300" TickPlacement="BottomRight" TickFrequency="20" IsSnapToTickEnabled="True" Name="DelaySlider" Margin="250,248,207,244" />
+        <Canvas Name="Handle" MouseLeftButtonDown="Handle_MouseLeftButtonDown" Background="Black" Opacity="0" Margin="0,0,0,490"/>
+        <Rectangle Height="2" Canvas.Top="37" Width="660" Fill="#FF292C31" Margin="0,37,0,501"/>
     </Grid>
 </Page>

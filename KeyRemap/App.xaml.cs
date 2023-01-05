@@ -20,7 +20,7 @@ namespace KeyRemap
         protected override void OnStartup(StartupEventArgs e)
         {
             _notifyIcon.Icon = new System.Drawing.Icon("image/remapIcon24x24.ico");
-            _notifyIcon.Text = "MyKeyRemapper";
+            _notifyIcon.Text = "MKeyRemap";
             _notifyIcon.Visible = true;
             _notifyIcon.ContextMenu = new Forms.ContextMenu();
             _notifyIcon.ContextMenu.MenuItems.Add("Open", new EventHandler(Open));

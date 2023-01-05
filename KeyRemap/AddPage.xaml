@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:KeyRemap"
       xmlns:xf="clr-namespace:XamlFlair;assembly=XamlFlair.WPF"
       mc:Ignorable="d" 
-      Height="540" Width="660" Background="#FF16191E"
+      Height="540" Width="660"
       Title="dada"
       x:Name="AddWindow"
       Focusable="True"
@@ -173,7 +173,7 @@
                    xf:Animations.StartWith="{StaticResource FadeOut}"
                    xf:Animations.AllowOpacityReset="False"
                    FontFamily="{StaticResource SourceCodePro}" IsHitTestVisible="False" TextAlignment="Center" TextTrimming="CharacterEllipsis" Name="ErrorMessage" TextWrapping="Wrap" Text="Error"  FontSize="20" Foreground="White"  Height="26" Width="467" Canvas.Left="93" Canvas.Top="425"/>
-        <Canvas Name="Handle" Height="50" Width="660" MouseLeftButtonDown="Handle_MouseLeftButtonDown" Background="Black" Opacity="0"/>
+        <Canvas Name="Handle" Height="48" Width="660" MouseLeftButtonDown="Handle_MouseLeftButtonDown" Background="Black" Opacity="0"/>
         <Rectangle Height="2" Canvas.Top="37" Width="660" Fill="#FF292C31"/>
         <Canvas Width="196" Height="67" Canvas.Left="235" Canvas.Top="261">
             <Rectangle Name="WindowList" RadiusX="10" RadiusY="10" Height="65" Width="215" Fill="#FF292C31" Stroke="#FF34373B" MouseLeftButtonDown="WindowList_MouseLeftButtonDown" Cursor="Hand" Canvas.Top="-10" Canvas.Left="-10"/>
@@ -183,6 +183,7 @@
                 </Rectangle.Fill>
             </Rectangle>
             <TextBlock FontFamily="{StaticResource SourceCodePro}" TextAlignment="Center" TextTrimming="CharacterEllipsis" Name="WindowName" IsHitTestVisible="False" TextWrapping="Wrap" Text="*EVERYWHERE*"  FontSize="20" Foreground="White"  Height="28" Width="144" Canvas.Left="48" Canvas.Top="8"/>
+            <TextBlock FontFamily="{StaticResource SourceCodePro-Bold}" FontStyle="Normal" TextAlignment="Center" TextTrimming="CharacterEllipsis" x:Name="RunLabel" TextWrapping="Wrap" Text="APPLY TO"  FontSize="18" Foreground="White" FontWeight="Bold" Canvas.Left="-119" Canvas.Top="11"/>
         </Canvas>
         <ListBox Name="WindowDropDown" Visibility="Hidden" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Height="104" Canvas.Left="225" Canvas.Top="304" Width="215" BorderBrush="#FF34373B" Background="#FF292C31" Foreground="White" SelectionChanged="WindowDropDown_SelectionChanged">
             <ListBox.Resources>
