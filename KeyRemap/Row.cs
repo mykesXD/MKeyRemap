@@ -80,7 +80,7 @@ namespace KeyRemap
             Rectangle rowBackground = new Rectangle
             {
                 Name = string.Format("RemapBackground{0}", MainPage.mainPageInstance.rows),
-                Width = 588,
+                Width = 616,
                 Height = 56,
                 Fill = Brushes.Transparent,
                 StrokeThickness = 0,
@@ -89,7 +89,7 @@ namespace KeyRemap
                 RadiusY = 10,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, 2, 2, 2),
+                Margin = new Thickness(0, 2, 0, 2),
             };
 
             rowBackground.MouseLeftButtonDown += rowBody_MouseLeftButtonDown;
@@ -102,14 +102,14 @@ namespace KeyRemap
             Rectangle rowBody = new Rectangle
             {
                 Name = string.Format("RemapRow{0}", MainPage.mainPageInstance.rows),
-                Width = 520,
+                Width = 560,
                 Height = 44,
                 Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF292C31"),
                 StrokeThickness = 1,
                 Stroke = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF34373B"),
                 RadiusX = 10,
                 RadiusY = 10,
-                Margin = new Thickness(2, 8, 2, 8),
+                Margin = new Thickness(0, 8, 4, 8),
                 IsHitTestVisible = false,
             };
             Grid.SetRow(rowBody, MainPage.mainPageInstance.rows);

@@ -165,7 +165,7 @@ namespace KeyRemap
             if (currentWindowName != prevWindowName)
             {
                 sortedList = keyMapList.OrderBy(o => o.window).ToList();
-                //Console.WriteLine(currentWindowName);
+                Console.WriteLine(currentWindowName);
                 foreach (Keymap keymap in sortedList)
                 {
                     if (currentWindowName.Contains(keymap.window) || keymap.window.Contains("EVERYWHERE") || currentWindowName.Contains("KeyRemap"))
@@ -307,7 +307,6 @@ namespace KeyRemap
                         var brush = new ImageBrush(Util.BitmapToBitmapSource(Util.Base64StringToBitmap(keymap.icon)));
                         Row row = new Row(keymap.keyMap1, keymap.keyMap2, brush);
                         row.Create();
-                        //keymap.Register();
                         List<string> remap = new List<String> { keymap.key1, keymap.key2, keymap.key3, keymap.key4, keymap.key5, keymap.key6 };
                         hotkeyList.Add(remap);
                         hotkeyWindowList.Add(keymap.window);

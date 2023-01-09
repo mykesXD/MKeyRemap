@@ -7,7 +7,7 @@
       xmlns:XamlFlair="clr-namespace:XamlFlair;assembly=XamlFlair.WPF"
       x:Class="KeyRemap.SettingsPage"
       mc:Ignorable="d" 
-      Height="540" Width="660" 
+      Height="540" Width="680" 
       Title="Settings"
       x:Name="SettingsMenu"
       Focusable="True" Loaded="SettingsMenu_Loaded">
@@ -88,7 +88,7 @@
           XamlFlair:Animations.PrimaryBinding="{Binding BinderSettingsOpened, UpdateSourceTrigger=PropertyChanged}"
           XamlFlair:Animations.Primary="{XamlFlair:Animate BasedOn={StaticResource FadeIn}, Duration=500, Event=None}">
         <TextBlock FontFamily="{StaticResource SourceCodePro-Bold}" FontStyle="Normal" TextAlignment="Center" TextTrimming="CharacterEllipsis" x:Name="RunLabel" TextWrapping="Wrap" Text="RUN ON START-UP"  FontSize="18" Foreground="White" FontWeight="Bold" Margin="94,99,454,383"/>
-        <TextBlock FontFamily="{StaticResource SourceCodePro-Bold}" FontStyle="Normal" TextAlignment="Center" TextTrimming="CharacterEllipsis" x:Name="DelayLabel" TextWrapping="Wrap" Text="HOTKEY DELAY"  FontSize="18" Foreground="White" FontWeight="Bold" Margin="94,240,454,234"/>
+        <TextBlock FontFamily="{StaticResource SourceCodePro-Bold}" FontStyle="Normal" TextAlignment="Center" TextTrimming="CharacterEllipsis" x:Name="DelayLabel" TextWrapping="Wrap" Text="HOTKEY DELAY"  FontSize="18" Foreground="White" FontWeight="Bold" Margin="98,240,458,234"/>
 
         <Rectangle XamlFlair:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=ApplyButton}"
         XamlFlair:Animations.Primary="{XamlFlair:Animate BasedOn={StaticResource Expand}, Event=None}"
@@ -97,15 +97,15 @@
         <TextBlock XamlFlair:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=ApplyButton}"
         XamlFlair:Animations.Primary="{XamlFlair:Animate BasedOn={StaticResource Expand}, Event=None}"
         XamlFlair:Animations.Secondary="{XamlFlair:Animate BasedOn={StaticResource Contract}, Event=None}"
-        FontFamily="{StaticResource SourceCodePro-Black}" IsHitTestVisible="False" TextAlignment="Center" TextTrimming="CharacterEllipsis" x:Name="SaveLabel" TextWrapping="Wrap" Text="SAVE"  FontSize="20" Foreground="White" Margin="199,481,384,7"/>
+        FontFamily="{StaticResource SourceCodePro-Black}" IsHitTestVisible="False" TextAlignment="Center" TextTrimming="CharacterEllipsis" x:Name="SaveLabel" TextWrapping="Wrap" Text="SAVE"  FontSize="20" Foreground="White" Margin="189,481,394,7"/>
         <Rectangle XamlFlair:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=CancelButton}"
         XamlFlair:Animations.Primary="{XamlFlair:Animate BasedOn={StaticResource Expand}, Event=None}"
         XamlFlair:Animations.Secondary="{XamlFlair:Animate BasedOn={StaticResource Contract}, Event=None}"
-        x:Name="CancelButton" RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Height="45" VerticalAlignment="Top" Width="115" MouseLeftButtonDown="CancelButton_MouseLeftButtonDown" Fill="#FF292C31" Stroke="#FF34373B" Margin="366,473,0,0"/>
+        x:Name="CancelButton" RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Height="45" VerticalAlignment="Top" Width="115" MouseLeftButtonDown="CancelButton_MouseLeftButtonDown" Fill="#FF292C31" Stroke="#FF34373B" Margin="385,473,0,0"/>
         <TextBlock XamlFlair:Animations.CombinedBinding="{Binding IsMouseOver, ElementName=CancelButton}"
         XamlFlair:Animations.Primary="{XamlFlair:Animate BasedOn={StaticResource Expand}, Event=None}"
         XamlFlair:Animations.Secondary="{XamlFlair:Animate BasedOn={StaticResource Contract}, Event=None}"
-        FontFamily="{StaticResource SourceCodePro-Black}" IsHitTestVisible="False" TextAlignment="Center" TextTrimming="CharacterEllipsis" x:Name="CancelLabel" TextWrapping="Wrap" Text="CANCEL"  FontSize="20" Foreground="White" Margin="382,481,196,7"/>
+        FontFamily="{StaticResource SourceCodePro-Black}" IsHitTestVisible="False" TextAlignment="Center" TextTrimming="CharacterEllipsis" x:Name="CancelLabel" TextWrapping="Wrap" Text="CANCEL"  FontSize="20" Foreground="White" Margin="393,481,185,7"/>
         <Rectangle XamlFlair:Animations.CombinedBinding="{Binding BinderDelay, UpdateSourceTrigger=PropertyChanged}"
             XamlFlair:Animations.Primary="{XamlFlair:Animate BasedOn={StaticResource Compound}, Event=None}"
             XamlFlair:Animations.Secondary="{XamlFlair:Animate BasedOn={StaticResource Compound}, Event=None}"

@@ -45,7 +45,7 @@ namespace KeyRemap
             var icon = new System.Drawing.Icon("./image/Globe.ico");
             var globe = icon.ToBitmap();
             processNameList.Add("*EVERYWHERE*");
-            processIconList.Add(new ImageBrush(Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
+            processIconList.Add(new ImageBrush(Util.BitmapToBitmapSource(globe)));
             processIcon.Add(globe);
             foreach (KeyValuePair<IntPtr, string> window in Win32.GetOpenWindows())
             {
@@ -467,6 +467,7 @@ namespace KeyRemap
         {
             if (KeyFocused[0])
             {
+                e.Handled = true;
                 if (e.SystemKey.ToString() == "None")
                 {
                     if (KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN")
@@ -483,6 +484,7 @@ namespace KeyRemap
             }
             if (KeyFocused[1])
             {
+                e.Handled = true;
                 if (e.SystemKey.ToString() == "None")
                 {
                     if (KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN")
@@ -499,6 +501,7 @@ namespace KeyRemap
             }
             if (KeyFocused[2])
             {
+                e.Handled = true;
                 if (e.SystemKey.ToString() == "None")
                 {
                     if (KeyDictionary.dropDownList.Contains(KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)]))
@@ -513,6 +516,7 @@ namespace KeyRemap
             }
             if (KeyFocused[3])
             {
+                e.Handled = true;
                 if (e.SystemKey.ToString() == "None")
                 {
                     if (KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN")
@@ -529,6 +533,7 @@ namespace KeyRemap
             }
             if (KeyFocused[4])
             {
+                e.Handled = true;
                 if (e.SystemKey.ToString() == "None")
                 {
                     if (KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "CTRL" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "SHIFT" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN" || KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)] == "WIN")
@@ -545,6 +550,7 @@ namespace KeyRemap
             }
             if (KeyFocused[5])
             {
+                e.Handled = true;
                 if (e.SystemKey.ToString() == "None")
                 {
                     if (KeyDictionary.dropDownList.Contains(KeyDictionary.keyDictionary[KeyInterop.VirtualKeyFromKey(e.Key)]))

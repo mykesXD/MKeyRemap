@@ -35,7 +35,7 @@ namespace KeyRemap
         {
             int modkey1;
             int modkey2;
-            //Console.WriteLine("KM: REGISTERING: {0}", window);
+            Console.WriteLine("KM: REGISTERING: {0}", window);
             if (key1.Contains("ALT"))
             {
                 modkey1 = 1;
@@ -223,7 +223,7 @@ namespace KeyRemap
         }
         public void Unregister() 
         {
-            //Console.WriteLine("KM: UNREGISTERING: {0},{1}",window ,id);
+            Console.WriteLine("KM: UNREGISTERING: {0},{1}",window ,id);
             MainPage.mainPageInstance.keyboardHookManager.UnregisterHotkey(id);
         }
 

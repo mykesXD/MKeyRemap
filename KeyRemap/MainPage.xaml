@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:KeyRemap"
       xmlns:xf="clr-namespace:XamlFlair;assembly=XamlFlair.WPF"
       mc:Ignorable="d" 
-      Height="540" Width="660"
+      Height="540" Width="680"
       Title="MainPage"
       Name="MenuWindow" Loaded="MenuWindow_Loaded" MouseRightButtonDown="MainPage_MouseRightButtonDown">
     <Page.Resources>
@@ -165,35 +165,35 @@
     <Canvas xf:Animations.PrimaryBinding="{Binding BinderSettingsOpened, UpdateSourceTrigger=PropertyChanged}"
             xf:Animations.Primary="{xf:Animate BasedOn={StaticResource FadeIn}, Duration=500, Event=None}"
             Name="ContainerCanvas">
-        <Rectangle Name="Container" Height="540" VerticalAlignment="Top" Grid.ColumnSpan="3" Grid.RowSpan="3" Width="660" MouseLeftButtonDown="ContainerCanvas_MouseLeftButtonDown">
+        <Rectangle Name="Container" Height="540" VerticalAlignment="Top" Grid.ColumnSpan="3" Grid.RowSpan="3" Width="680" MouseLeftButtonDown="ContainerCanvas_MouseLeftButtonDown">
             <Rectangle.Fill>
                 <SolidColorBrush Color="#FF1E2126" Opacity="0"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle Name="BodyBackground" RadiusX="10" RadiusY="10" Height="409" VerticalAlignment="Top" Fill="#FF1E2126" Stroke="#FF292C31" Canvas.Left="20" Canvas.Top="113" Grid.ColumnSpan="3" Grid.RowSpan="3" Width="619" MouseLeftButtonDown="BodyBackground_MouseLeftButtonDown"/>
-        <Canvas Name="Handle" Height="39" Width="660" MouseLeftButtonDown="Handle_MouseLeftButtonDown" Background="Black" Opacity="0"/>
-        <ScrollViewer Focusable="False" Name="ScrollView" Height="388" Canvas.Left="23" Canvas.Top="121" Width="629">
-            <Canvas Name ="ScrollContainer" Height="373" >
-                <Grid Name="BodyContainer" Height="87" Width="602" Canvas.Left="7" Canvas.Top="6">
+        <Rectangle Name="BodyBackground" RadiusX="10" RadiusY="10" Height="409" VerticalAlignment="Top" Fill="#FF1E2126" Stroke="#FF292C31" Canvas.Left="20" Canvas.Top="113" Grid.ColumnSpan="3" Grid.RowSpan="3" Width="640" MouseLeftButtonDown="BodyBackground_MouseLeftButtonDown"/>
+        <Canvas Name="Handle" Height="39" Width="680" MouseLeftButtonDown="Handle_MouseLeftButtonDown" Background="Black" Opacity="0"/>
+        <ScrollViewer Focusable="False" Name="ScrollView" Height="388" Canvas.Left="26" Canvas.Top="121" Width="644">
+            <Canvas Name ="ScrollContainer" Height="372" Width="634" >
+                <Grid Name="BodyContainer" Height="87" Width="622" Canvas.Left="3" Canvas.Top="6">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="54"/>
-                        <ColumnDefinition Width="246"/>
-                        <ColumnDefinition Width="32"/>
-                        <ColumnDefinition Width="270"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="259"/>
+                        <ColumnDefinition Width="42"/>
+                        <ColumnDefinition Width="271"/>
                     </Grid.ColumnDefinitions>
                     <!--<Rectangle Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Fill="#FF292C31" RadiusY="10" RadiusX="10" Stroke="#FF34373B" Margin="5,8,5,8"/>-->
                 </Grid>
             </Canvas>
         </ScrollViewer>
-        <Rectangle x:Name="CloseButton" HorizontalAlignment="Left" Height="22" VerticalAlignment="Top" Width="22" MouseLeftButtonDown="CloseButton_MouseLeftButtonDown" Cursor="Hand" Canvas.Left="618" Canvas.Top="9">
+        <Rectangle x:Name="CloseButton" HorizontalAlignment="Left" Height="22" VerticalAlignment="Top" Width="22" MouseLeftButtonDown="CloseButton_MouseLeftButtonDown" Cursor="Hand" Canvas.Left="648" Canvas.Top="9">
             <Rectangle.Fill>
                 <ImageBrush ImageSource="image/close_ring.png"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle x:Name="MinimizeButton" HorizontalAlignment="Left" Height="22" VerticalAlignment="Top" Width="22" Cursor="Hand" Canvas.Left="579" Canvas.Top="9" MouseLeftButtonDown="MinimizeButton_MouseLeftButtonDown">
+        <Rectangle x:Name="MinimizeButton" HorizontalAlignment="Left" Height="22" VerticalAlignment="Top" Width="22" Cursor="Hand" Canvas.Left="610" Canvas.Top="9" MouseLeftButtonDown="MinimizeButton_MouseLeftButtonDown">
             <Rectangle.Fill>
                 <ImageBrush ImageSource="image/Remove.png"/>
             </Rectangle.Fill>
@@ -202,7 +202,7 @@
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Grow}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Shrink}, Event=None}"
                    xf:Animations.StartWith="{xf:Animate BasedOn={StaticResource Shrink}}"
-                    Name="AddButton" HorizontalAlignment="Left" Height="51" VerticalAlignment="Top" Width="51" MouseLeftButtonDown="AddButton_MouseLeftButtonDown" Cursor="Hand" Canvas.Left="34" Canvas.Top="56">
+                    Name="AddButton" HorizontalAlignment="Left" Height="51" VerticalAlignment="Top" Width="51" MouseLeftButtonDown="AddButton_MouseLeftButtonDown" Cursor="Hand" Canvas.Left="28" Canvas.Top="56">
             <Rectangle.Fill>
                 <ImageBrush RenderOptions.BitmapScalingMode="NearestNeighbor" ImageSource="image/add.png" Stretch="Uniform"/>
             </Rectangle.Fill>
@@ -212,7 +212,7 @@
                     xf:Animations.SecondaryBinding="{Binding BinderPause}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Shrink}, Event=None}"
                    xf:Animations.StartWith="{xf:Animate BasedOn={StaticResource Shrink}}"
-                    x:Name="PauseButton" HorizontalAlignment="Left" Height="48" VerticalAlignment="Top" Width="48" Cursor="Hand" Canvas.Left="503" Canvas.Top="56" RenderTransformOrigin="0.5,0.5" Opacity="0.9" MouseLeftButtonDown="PauseButton_MouseLeftButtonDown" MouseLeave="PauseButton_MouseLeave">
+                    x:Name="PauseButton" HorizontalAlignment="Left" Height="48" VerticalAlignment="Top" Width="49" Cursor="Hand" Canvas.Left="533" Canvas.Top="56" RenderTransformOrigin="0.5,0.5" Opacity="0.9" MouseLeftButtonDown="PauseButton_MouseLeftButtonDown" MouseLeave="PauseButton_MouseLeave">
             <Rectangle.Fill>
                 <ImageBrush RenderOptions.BitmapScalingMode="NearestNeighbor" ImageSource="image/pause.png" Stretch="Uniform"/>
             </Rectangle.Fill>
@@ -221,7 +221,7 @@
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Grow}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Shrink}, Event=None}"
                    xf:Animations.StartWith="{xf:Animate BasedOn={StaticResource Shrinker}, Event=None}"
-                    Name="EditButton" HorizontalAlignment="Left" Height="49" VerticalAlignment="Top" Width="49" MouseLeftButtonDown="EditButton_MouseLeftButtonDown" MouseEnter="EditButton_MouseEnter" MouseLeave="EditButton_MouseLeave" Canvas.Left="105" Canvas.Top="58" RenderTransformOrigin="0.809,0.512" Opacity="0.2">
+                    Name="EditButton" HorizontalAlignment="Left" Height="49" VerticalAlignment="Top" Width="49" MouseLeftButtonDown="EditButton_MouseLeftButtonDown" MouseEnter="EditButton_MouseEnter" MouseLeave="EditButton_MouseLeave" Canvas.Left="99" Canvas.Top="58" RenderTransformOrigin="0.809,0.512" Opacity="0.2">
             <Rectangle.Fill>
                 <ImageBrush RenderOptions.BitmapScalingMode="NearestNeighbor" ImageSource="image/edit.png" Stretch="Uniform"/>
             </Rectangle.Fill>
@@ -231,7 +231,7 @@
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Shrink}, Event=None}"
                    xf:Animations.StartWith="{xf:Animate BasedOn={StaticResource Shrinker}, Event=None}"
                    
-                    x:Name="DeleteButton" HorizontalAlignment="Left" Height="48" VerticalAlignment="Top" Width="48" MouseLeftButtonDown="DeleteButton_MouseLeftButtonDown" MouseEnter="DeleteButton_MouseEnter" MouseLeave="DeleteButton_MouseLeave" Canvas.Left="174" Canvas.Top="56" Opacity="0.2">
+                    x:Name="DeleteButton" HorizontalAlignment="Left" Height="48" VerticalAlignment="Top" Width="48" MouseLeftButtonDown="DeleteButton_MouseLeftButtonDown" MouseEnter="DeleteButton_MouseEnter" MouseLeave="DeleteButton_MouseLeave" Canvas.Left="168" Canvas.Top="56" Opacity="0.2">
             <Rectangle.Fill>
                 <ImageBrush RenderOptions.BitmapScalingMode="NearestNeighbor" ImageSource="image/trash.png" Stretch="Uniform"/>
             </Rectangle.Fill>
@@ -240,11 +240,11 @@
                     xf:Animations.Primary="{xf:Animate BasedOn={StaticResource Grow}, Event=None}"
                     xf:Animations.Secondary="{xf:Animate BasedOn={StaticResource Shrink}, Event=None}"
                    xf:Animations.StartWith="{xf:Animate BasedOn={StaticResource Shrink}}"
-                    x:Name="SettingsButton" HorizontalAlignment="Left" Height="46" VerticalAlignment="Top" Width="46" Canvas.Left="572" Canvas.Top="57" MouseLeftButtonDown="SettingsButton_MouseLeftButtonDown" Opacity="0.892">
+                    x:Name="SettingsButton" HorizontalAlignment="Left" Height="46" VerticalAlignment="Top" Width="47" Canvas.Left="604" Canvas.Top="57" MouseLeftButtonDown="SettingsButton_MouseLeftButtonDown" Opacity="0.892">
             <Rectangle.Fill>
                 <ImageBrush ImageSource="image/Settings.png"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle Height="2" Canvas.Top="37" Width="660" Fill="#FF292C31"/>
+        <Rectangle Height="2" Canvas.Top="37" Width="680" Fill="#FF292C31"/>
     </Canvas>
 </Page>
